@@ -13,17 +13,17 @@
         <tr>
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://github.com/bersen3v/yet_another_todo_app/blob/4b06c8f932fdfa9a8af6bfe49ae5f0ecfe20f7b5/assets/readme_photos/2.png?raw=true" width="200"/>
+                    <img src="https://sun9-76.userapi.com/impg/y8TxNRww-loLQEa-5Y8OOMXNWqfB67rN9Gu9NQ/GoIDn4xy368.jpg?size=430x932&quality=95&sign=7a80ce66319bd3b0d4885d059b0644bd&type=album" width="200"/>
                 </a>
             </td>            
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://github.com/bersen3v/yet_another_todo_app/blob/4b06c8f932fdfa9a8af6bfe49ae5f0ecfe20f7b5/assets/readme_photos/1.png?raw=true" width="200"/>
+                    <img src="https://sun9-53.userapi.com/impg/2LJBaiYZSTMl5COnVugqvcdW-AYEA2YMzsqWyQ/hD9lI0_l3ig.jpg?size=430x932&quality=95&sign=a3f642815f7694ab0a1e146e5e66b01b&type=album" width="200"/>
                 </a>
             </td>
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://raw.githubusercontent.com/bersen3v/yet_another_todo_app/0392cd093398f3d07a68a5ae35a5260980fccaf2/assets/readme_photos/3.png" width="200"/>
+                    <img src="https://sun9-15.userapi.com/impg/1I_OuoXGHtBS6WQCDUAzMvnk94-GByszts03EA/6NS759hL1u8.jpg?size=430x932&quality=95&sign=a201dfa6b5c10d8b33f559714cb12dcf&type=album" width="200"/>
                 </a>
             </td>
         </tr>
