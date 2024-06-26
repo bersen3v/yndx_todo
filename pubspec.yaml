@@ -12,7 +12,7 @@ dependencies:
   gap:
   cupertino_icons:
   logger:
-
+  flutter_bloc:
 
 
 dev_dependencies:
