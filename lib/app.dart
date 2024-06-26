@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/presentation/home.dart';
 
 class App extends StatelessWidget {
@@ -10,13 +10,11 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'sfpro', useMaterial3: true),
       debugShowCheckedModeBanner: false,
-      home: Container(
-        color: Styles.scaffoldBackgroundColor,
-        child: const SafeArea(
-          bottom: false,
-          child: HomeScreen(),
-        ),
-      ),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const HomeScreen(),
+        '/create': (context) => const AddTaskScreen(),
+      },
     );
   }
 }

@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/task_difficulty_enum.dart';
-import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
+import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
-import 'package:yndx_todo/features/home_page/domain/tasks_inherited_widget.dart';
 
 class Tasks extends StatelessWidget {
   const Tasks({
     super.key,
     required this.tasks,
     this.done = false,
+    required this.doneTasks,
   });
 
+  final List<Task> doneTasks;
   final List<Task> tasks;
   final bool done;
 
@@ -49,7 +49,12 @@ class Tasks extends StatelessWidget {
                   )
                 : Column(
                     children: tasks
-                        .map((task) => _TaskView(task: task, done: done))
+                        .map((task) => _TaskView(
+                              task: task,
+                              done: done,
+                              tasks: tasks,
+                              doneTasks: doneTasks,
+                            ))
                         .toList(),
                   ),
           ),
@@ -64,30 +69,19 @@ class _TaskView extends StatelessWidget {
     super.key,
     required this.task,
     this.done = false,
+    required this.tasks,
+    required this.doneTasks,
   });
 
+  final List<Task> doneTasks;
+  final List<Task> tasks;
   final Task task;
   final bool done;
 
   @override
   Widget build(BuildContext context) {
-    final model = TasksInheritedWidget.of(context)!.model;
     return GestureDetector(
-      onTap: model.tasks.contains(task)
-          ? () {
-              LoggerInhWidget.of(context)!
-                  .logger
-                  .d('Нажатие на кнопку "редактировать задачу"');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddTaskScreen(
-                    task: task,
-                  ),
-                ),
-              );
-            }
-          : () {},
+      onTap: tasks.contains(task) ? () {} : () {},
       child: done
           ? Dismissible(
               direction: DismissDirection.endToStart,
@@ -97,27 +91,16 @@ class _TaskView extends StatelessWidget {
                 icon: Icons.delete,
                 iconAlignment: Alignment.centerRight,
               ),
-              child: _TaskCard(task: task),
-              onDismissed: (direction) {
-                model.deleteDoneTask(task);
-                LoggerInhWidget.of(context)!
-                    .logger
-                    .d('Свайп по выполненной задаче => задача удалена');
-              },
+              child: _TaskCard(
+                task: task,
+                doneTasks: doneTasks,
+              ),
+              onDismissed: (direction) {},
             )
           : Dismissible(
               onDismissed: (direction) {
                 if (direction == DismissDirection.endToStart) {
-                  LoggerInhWidget.of(context)!
-                      .logger
-                      .d('Свайп по задаче => удаление задачи');
-                  model.deleteTask(task);
-                } else {
-                  LoggerInhWidget.of(context)!
-                      .logger
-                      .d('Свайп по задаче => задача выполнена');
-                  model.completeTask(task);
-                }
+                } else {}
               },
               secondaryBackground: const _DismissibleBg(
                 color: Styles.red,
@@ -131,6 +114,7 @@ class _TaskView extends StatelessWidget {
               key: UniqueKey(),
               child: _TaskCard(
                 task: task,
+                doneTasks: [],
               ),
             ),
     );
@@ -141,13 +125,14 @@ class _TaskCard extends StatelessWidget {
   const _TaskCard({
     super.key,
     required this.task,
+    required this.doneTasks,
   });
 
   final Task task;
+  final List<Task> doneTasks;
 
   @override
   Widget build(BuildContext context) {
-    final model = TasksInheritedWidget.of(context)!.model;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Container(
@@ -159,20 +144,19 @@ class _TaskCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              model.doneTasks.contains(task)
+              doneTasks.contains(task)
                   ? const _DoneMark()
                   : _TaskDifficultyIndicator(
-                      taskDifficulty:
-                          task.taskDifficulty ?? TaskDifficulty.light),
+                      taskDifficulty: task.importance ?? Importance.low),
               const Gap(10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Gap(6),
-                    if (task.deadlineDate != null)
-                      _DeadlineText(ddl: task.showDeadlineDate()),
-                    _TaskDescriptionText(task: task.taskText ?? ''),
+                    if (task.deadline != null)
+                      _DeadlineText(ddl: task.deadline?.showDeadlineDate(task)),
+                    _TaskDescriptionText(task: task.text ?? ''),
                     const Gap(6)
                   ],
                 ),
@@ -266,7 +250,7 @@ class _TaskDifficultyIndicator extends StatelessWidget {
     required this.taskDifficulty,
   });
 
-  final TaskDifficulty taskDifficulty;
+  final Importance taskDifficulty;
 
   @override
   Widget build(BuildContext context) {
@@ -276,9 +260,9 @@ class _TaskDifficultyIndicator extends StatelessWidget {
         width: 7,
         decoration: BoxDecoration(
             color: switch (taskDifficulty) {
-              TaskDifficulty.light => Styles.green,
-              TaskDifficulty.medium => Styles.systemOrange,
-              TaskDifficulty.hard => Styles.red
+              Importance.low => Styles.green,
+              Importance.basic => Styles.systemOrange,
+              Importance.important => Styles.red
             },
             borderRadius: BorderRadius.circular(90)),
       ),

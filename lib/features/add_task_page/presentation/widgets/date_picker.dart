@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
-import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
-import 'package:yndx_todo/features/add_task_page/domain/new_task_inh_widget.dart';
+import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_text_field.dart';
 
 class DatePicker extends StatefulWidget {
@@ -26,18 +25,14 @@ class _DatePickerState extends State<DatePicker> {
 
     if (pickedDate == null) return;
 
-    LoggerInhWidget.of(context)!
-        .logger
-        .d('Изменение дедлайна задачи на $pickedDate"');
-
     datePickerController.text =
         '${pickedDate.day} ${numbersOfMonth[pickedDate.month]}';
-    NewTaskInheritedWidget.of(context)?.task.deadlineDate = pickedDate;
+    widget.task.deadline = pickedDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    final date = widget.task.deadlineDate;
+    final date = widget.task.deadline;
     return CustomTextField(
       controller: datePickerController
         ..text = (date != null)

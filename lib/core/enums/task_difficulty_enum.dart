@@ -1,5 +1,5 @@
-enum TaskDifficulty {
-  light,
-  medium,
-  hard,
+enum Importance {
+  low,
+  basic,
+  important,
 }

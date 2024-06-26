@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
+import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/domain/new_task_inh_widget.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
@@ -11,8 +10,10 @@ class CustomTextField extends StatefulWidget {
     this.labelText = 'Опиши задачу',
     this.readOnly = false,
     required this.onTap,
+    this.task,
   });
 
+  final Task? task;
   final TextEditingController controller;
   final String labelText;
   final bool readOnly;
@@ -49,8 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fontSize: 20,
       ),
       onChanged: (value) {
-        LoggerInhWidget.of(context)!.logger.d('изменен текст задачи: $value');
-        NewTaskInheritedWidget.of(context)?.task.taskText = value;
+        widget.task?.text = value;
       },
       decoration: InputDecoration(
         prefixIcon: widget.readOnly

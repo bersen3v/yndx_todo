@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/task_difficulty_enum.dart';
-import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/domain/new_task_inh_widget.dart';
 
 class DifficultySlider extends StatefulWidget {
   const DifficultySlider({
     super.key,
+    required this.task,
   });
+
+  final Task task;
 
   @override
   State<DifficultySlider> createState() => _DifficultySliderState();
@@ -16,13 +18,11 @@ class DifficultySlider extends StatefulWidget {
 class _DifficultySliderState extends State<DifficultySlider> {
   @override
   Widget build(BuildContext context) {
-    final task = NewTaskInheritedWidget.of(context)?.task;
-
-    double value = switch (task!.taskDifficulty) {
-      TaskDifficulty.light => 0,
-      TaskDifficulty.medium => 1,
-      TaskDifficulty.hard => 2,
-      null => throw UnimplementedError(),
+    double value = switch (widget.task.importance) {
+      Importance.low => 0,
+      Importance.basic => 1,
+      Importance.important => 2,
+      null => 0,
     };
 
     Color color = switch (value) {
@@ -54,22 +54,19 @@ class _DifficultySliderState extends State<DifficultySlider> {
             divisions: 2,
             value: value,
             onChanged: (value) {
-              LoggerInhWidget.of(context)!
-                  .logger
-                  .d('изменение сложности задачи на $value');
               setState(
                 () {
                   value = value;
                   switch (value) {
                     case 0:
                       color = Styles.green;
-                      task.taskDifficulty = TaskDifficulty.light;
+                      widget.task.importance = Importance.low;
                     case 1:
                       color = Styles.systemOrange;
-                      task.taskDifficulty = TaskDifficulty.medium;
+                      widget.task.importance = Importance.basic;
                     case 2:
                       color = Styles.red;
-                      task.taskDifficulty = TaskDifficulty.hard;
+                      widget.task.importance = Importance.important;
                   }
                 },
               );

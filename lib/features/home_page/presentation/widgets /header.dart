@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/home_page/domain/tasks_inherited_widget.dart';
 
 class Header extends StatelessWidget {
   const Header({
     super.key,
+    required this.completedTasks,
+    required this.allTasks,
   });
+
+  final int completedTasks;
+  final int allTasks;
 
   @override
   Widget build(BuildContext context) {
-    final model = TasksInheritedWidget.of(context)!.model;
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: RichText(
@@ -25,7 +28,7 @@ class Header extends StatelessWidget {
               ),
             ),
             TextSpan(
-              text: "(${model.completedTasks}/${model.allTasks})",
+              text: "($completedTasks/$allTasks)",
               style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w400,

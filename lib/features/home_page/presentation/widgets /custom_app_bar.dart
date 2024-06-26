@@ -5,10 +5,15 @@ import 'package:yndx_todo/features/home_page/presentation/widgets%20/header.dart
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
     super.key,
+    required this.completedTasks,
+    required this.allTasks,
   });
+
+  final int completedTasks;
+  final int allTasks;
   @override
   Widget build(BuildContext context) {
-    return const SliverAppBar(
+    return SliverAppBar(
       centerTitle: false,
       floating: false,
       pinned: true,
@@ -21,7 +26,10 @@ class CustomAppBar extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: EdgeInsets.only(bottom: 15),
         centerTitle: false,
-        title: Header(),
+        title: Header(
+          completedTasks: completedTasks,
+          allTasks: allTasks,
+        ),
       ),
     );
   }
