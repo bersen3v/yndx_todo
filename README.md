@@ -24,7 +24,7 @@
             </td>
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://sun9-15.userapi.com/impg/1I_OuoXGHtBS6WQCDUAzMvnk94-GByszts03EA/6NS759hL1u8.jpg?size=430x932&quality=95&sign=a201dfa6b5c10d8b33f559714cb12dcf&type=album" width="200"/>
+                    <img src="https://lh3.googleusercontent.com/u/0/drive-viewer/AKGpihZiOBISNz_G1hfP36uf7ASh9HLhMKcoITwQrpkp8hEHOYA_hBd0bHxtGnK5djSIFw5ve71SyetxRL6k8PPYAB8SUGrF7yfntfw=w2624-h1486-rw-v1" width="200"/>
                 </a>
             </td>
         </tr>
