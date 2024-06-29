@@ -14,7 +14,7 @@
         <tr>
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://sun9-76.userapi.com/impg/y8TxNRww-loLQEa-5Y8OOMXNWqfB67rN9Gu9NQ/GoIDn4xy368.jpg?size=430x932&quality=95&sign=7a80ce66319bd3b0d4885d059b0644bd&type=album" width="200"/>
+                    <img src="https://lh3.google.com/u/0/d/19BjlaxL1D7XTwVNDKwU3nllyWs7M8_a9=w2624-h1486-iv1" width="200"/>
                 </a>
             </td>            
             <td style="text-align: center">
