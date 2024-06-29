@@ -19,7 +19,7 @@
             </td>            
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://lh3.google.com/u/0/d/1mZvafhkglNwTw3lppFkMStkBwKfqvstN=w2624-h1486-iv1" width="200"/>
+                    <img src="https://lh3.googleusercontent.com/u/0/drive-viewer/AKGpihafreUcVfRuuumXCIwfzgpM9RZYWaQhX39kdyQTihlRMm0ANWvocY5oLi8ky-hfT2_AepJo8RXLoAAF9VcsR8WmXUHHUG50sio=w2624-h1486-rw-v1" width="200"/>
                 </a>
             </td>
             <td style="text-align: center">
