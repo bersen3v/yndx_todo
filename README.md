@@ -14,7 +14,7 @@
         <tr>
             <td style="text-align: center">
                 <a href="">
-                    <img src="https://drive.google.com/file/d/19BjlaxL1D7XTwVNDKwU3nllyWs7M8_a9/view?usp=drive_link" width="200"/>
+                    <img src="https://lh3.googleusercontent.com/u/0/drive-viewer/AKGpiha1e15M5OdOzndDKazHogcinrNu7DLUc6tTM4ehgegUenakl4_oXhhxiyv3oEovboZBqf_cB_6suF3qeRneCLM0O3Mt1QAVzxU=w2624-h1486-rw-v1" width="200"/>
                 </a>
             </td>            
             <td style="text-align: center">
