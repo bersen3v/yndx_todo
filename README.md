@@ -1,6 +1,7 @@
 # yndx_todo
 
 Мобильное приложение для отслеживания задач!
+[Скачать актуальную версию приложенения](https://drive.google.com/file/d/19iyd7RcAMWx4VuBh74tnHHUsjAOwjMTh/view?usp=sharing)
 
 фичи:
 - Добавление и удаление задач
