@@ -1,15 +1,29 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:yndx_todo/core/enums/task_difficulty_enum.dart';
+import 'package:hive/hive.dart';
 
-class Task {
+import 'package:yndx_todo/core/enums/importance.dart';
+
+part 'task.g.dart';
+
+@HiveType(typeId: 2)
+class Task extends HiveObject {
+  @HiveField(0)
   DateTime? deadline;
+  @HiveField(1)
   DateTime? createdAt;
+  @HiveField(2)
   DateTime? changedAt;
+  @HiveField(3)
   bool? done;
+  @HiveField(4)
   String? text;
+  @HiveField(5)
   Importance? importance;
+  @HiveField(6)
   String? lastUpdatedBy;
+  @HiveField(7)
   int? id;
 
   Task({
@@ -18,10 +32,22 @@ class Task {
     this.changedAt,
     this.done,
     this.text,
-    this.importance,
+    required this.importance,
     this.lastUpdatedBy,
     this.id,
   });
+
+  Task clone() {
+    return Task(
+        importance: importance,
+        deadline: deadline,
+        changedAt: changedAt,
+        createdAt: createdAt,
+        done: done,
+        text: text,
+        id: id,
+        lastUpdatedBy: lastUpdatedBy);
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -73,6 +99,53 @@ class Task {
 
   @override
   String toString() {
-    return 'Task(deadline: $deadline, createdAt: $createdAt, changedAt: $changedAt, done: $done, text: $text, importance: $importance, lastUpdatedBy: $lastUpdatedBy)';
+    return 'Task(id: $id ,deadline: $deadline, createdAt: $createdAt, changedAt: $changedAt, done: $done, text: $text, importance: $importance, lastUpdatedBy: $lastUpdatedBy)';
+  }
+
+  @override
+  int get hashCode {
+    return deadline.hashCode ^
+        createdAt.hashCode ^
+        changedAt.hashCode ^
+        done.hashCode ^
+        text.hashCode ^
+        importance.hashCode ^
+        lastUpdatedBy.hashCode ^
+        id.hashCode;
+  }
+
+  @override
+  bool operator ==(covariant Task other) {
+    if (identical(this, other)) return true;
+    return other.deadline == deadline &&
+        other.createdAt == createdAt &&
+        other.changedAt == changedAt &&
+        other.done == done &&
+        other.text == text &&
+        other.importance == importance &&
+        other.lastUpdatedBy == lastUpdatedBy &&
+        other.id == id;
+  }
+
+  Task copyWith({
+    DateTime? deadline,
+    DateTime? createdAt,
+    DateTime? changedAt,
+    bool? done,
+    String? text,
+    Importance? importance,
+    String? lastUpdatedBy,
+    int? id,
+  }) {
+    return Task(
+      deadline: deadline ?? this.deadline,
+      createdAt: createdAt ?? this.createdAt,
+      changedAt: changedAt ?? this.changedAt,
+      done: done ?? this.done,
+      text: text ?? this.text,
+      importance: importance ?? this.importance,
+      lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
+      id: id ?? this.id,
+    );
   }
 }

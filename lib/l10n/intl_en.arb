@@ -1,0 +1,19 @@
+{
+  "homeHeader": "Your tasks ",
+  "inwork": "in work",
+  "done": "completed",
+  "addtask": "add task",
+  "newTask": "New\ntask",
+  "easy": "easy",
+  "medium": "medium",
+  "hard": "hard",
+  "describeTask": "Describe task",
+  "chooseDifficulty": "Choose difficulty",
+  "deadline": "deadline",
+  "delete": "delete",
+  "save": "save",
+  "noDeadline": "without deadline",
+  "noCompletedTasks": "There are no completed tasks",
+  "noUncompletedTasks": "There are no unfulfilled tasks, \nyou are cool!",
+  "sync": "Синхронизация данных на всех устройствах. Да, получилось долговато, извиняюсь..."
+}

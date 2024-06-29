@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
-import 'package:yndx_todo/core/enums/task_difficulty_enum.dart';
+import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
+import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
 class Tasks extends StatelessWidget {
   const Tasks({
@@ -35,10 +39,19 @@ class Tasks extends StatelessWidget {
                 ? SizedBox(
                     height: 150,
                     child: done
-                        ? const SizedBox()
-                        : const Center(
+                        ? Center(
                             child: Text(
-                              'Невыполненных задач нет,\nты крут!',
+                              S.of(context).noCompletedTasks,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Styles.grey06,
+                                  fontSize: 25,
+                                  height: 1),
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              S.of(context).noUncompletedTasks,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   color: Styles.grey06,
@@ -81,7 +94,14 @@ class _TaskView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: tasks.contains(task) ? () {} : () {},
+      onTap: tasks.contains(task)
+          ? () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddTaskScreen(task: task)));
+            }
+          : () {},
       child: done
           ? Dismissible(
               direction: DismissDirection.endToStart,
@@ -95,12 +115,22 @@ class _TaskView extends StatelessWidget {
                 task: task,
                 doneTasks: doneTasks,
               ),
-              onDismissed: (direction) {},
+              onDismissed: (direction) {
+                context
+                    .read<HomePageBloc>()
+                    .add(RemoveTaskEvent(task: task, context: context));
+              },
             )
           : Dismissible(
               onDismissed: (direction) {
                 if (direction == DismissDirection.endToStart) {
-                } else {}
+                  context
+                      .read<HomePageBloc>()
+                      .add(RemoveTaskEvent(task: task, context: context));
+                } else {
+                  context.read<HomePageBloc>().add(ChangeTaskEvent(
+                      task: task..done = !task.done!, context: context));
+                }
               },
               secondaryBackground: const _DismissibleBg(
                 color: Styles.red,

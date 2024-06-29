@@ -9,24 +9,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  gap:
-  cupertino_icons:
-  logger:
-  flutter_bloc:
-  bloc:
-  bloc_concurrency:
-  freezed_annotation: 
-  freezed:
-  http:
-
+  flutter_localizations:
+    sdk: flutter
+  gap: 
+  cupertino_icons: 
+  logger: 
+  flutter_bloc: 
+  bloc: 
+  bloc_concurrency: 
+  http: 
+  isar_flutter_libs: 
+  hive: 
+  hive_flutter: 
+  collection: 
 
 dev_dependencies:
-  flutter_lints: ^3.0.0
-  build_runner:
-  flutter_test: 
+  flutter_lints: ^4.0.0
+  build_runner: 
+  flutter_test:
     sdk: flutter
-  
-  
+  hive_generator: 
 
 flutter:
   uses-material-design: true
+flutter_intl:
+  enabled: true

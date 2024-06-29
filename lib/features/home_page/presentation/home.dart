@@ -2,14 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:yndx_todo/core/data/data_fetcher.dart';
-import 'package:yndx_todo/core/domain/entities/task.dart';
-
+import 'package:yndx_todo/core/services/todo_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_app_bar.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/tasks.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets%20/view_switcher.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,8 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomePageBloc(),
-      child: const _HomeScreenView(),
+      create: (context) =>
+          HomePageBloc(RepositoryProvider.of<TodoService>(context))
+            ..add(RegisterServicesEvent()),
+      child: Navigator(
+        onPopPage: (route, result) => true,
+        pages: const [
+          MaterialPage(child: _HomeScreenView()),
+        ],
+      ),
     );
   }
 }
@@ -35,22 +43,65 @@ class _HomeScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Styles.scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              CustomAppBar(
-                completedTasks: 0,
-                allTasks: 10,
+      body: BlocBuilder<HomePageBloc, HomePageState>(
+        builder: (context, state) {
+          return switch (state) {
+            RegisteringServicesState() => Center(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        textAlign: TextAlign.center,
+                        S.of(context).sync,
+                        style: const TextStyle(
+                            color: Styles.grey06, fontSize: 25, height: 1),
+                      ),
+                      const Gap(20),
+                      const CircularProgressIndicator(
+                        color: Styles.orange,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              _TaskList(),
-            ],
-          ),
-          _Button()
-        ],
+            TodosLoadedState() => const _LoadedView(),
+          };
+        },
       ),
+    );
+  }
+}
+
+class _LoadedView extends StatelessWidget {
+  const _LoadedView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      builder: (context, state) {
+        final data = state as TodosLoadedState;
+        return Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                CustomAppBar(
+                  completedTasks:
+                      data.tasks.where((e) => e.done == true).length,
+                  allTasks: data.tasks.length,
+                ),
+                const _TaskList(),
+              ],
+            ),
+            const _Button()
+          ],
+        );
+      },
     );
   }
 }
@@ -65,52 +116,31 @@ class _TaskList extends StatefulWidget {
 }
 
 class _TaskListState extends State<_TaskList> {
-  dynamic data;
-  Map<String, dynamic>? data2;
-
-  final client = MyHttpClient();
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  void getData() async {
-    client.getAt(12345).then((value) async {
-      data = value;
-      setState(() {});
-      (data as Task).id = 16032005;
-      print(data);
-      print(await client.post(data));
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SliverList.list(
-      children: [
-        Gap(30),
-        Tasks(
-          tasks: [],
-          doneTasks: [],
-        ),
-        Gap(10),
-        Tasks(
-          tasks: [],
-          done: true,
-          doneTasks: [],
-        ),
-        Gap(50),
-        Text(
-          data.toString(),
-          style: TextStyle(color: Colors.white),
-        ),
-        Text(
-          data2.toString(),
-          style: TextStyle(color: Colors.white),
-        )
-      ],
+    return BlocBuilder<HomePageBloc, HomePageState>(
+      builder: (context, state) {
+        final data = state as TodosLoadedState;
+        final tasks = data.tasks.where((e) => e.done != true).toList();
+        final doneTasks = data.tasks.where((e) => e.done == true).toList();
+        return SliverList.list(
+          children: [
+            const Gap(30),
+            ViewSwitcher(
+              inWork: '${tasks.length}',
+              done: '${doneTasks.length}',
+            ),
+            context.read<HomePageBloc>().view == 0
+                ? Tasks(tasks: tasks, doneTasks: doneTasks)
+                : Tasks(
+                    tasks: doneTasks,
+                    done: true,
+                    doneTasks: doneTasks,
+                  ),
+            const Gap(150),
+          ],
+        );
+      },
     );
   }
 }
@@ -128,13 +158,10 @@ class _Button extends StatelessWidget {
       left: 10,
       child: CustomButton(
         color: Styles.orange,
-        text: 'добавить задачу',
+        text: S.of(context).addtask,
         onTap: () {
-          Navigator.pushNamed(context, '/create');
-          // arguments: Task(
-          //     taskDifficulty: TaskDifficulty.medium,
-          //     taskText: 'asdsf',
-          //     deadlineDate: DateTime.now()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AddTaskScreen()));
         },
       ),
     );

@@ -1,18 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:yndx_todo/core/domain/entities/task.dart';
 
 class MyHttpClient {
   late int revision;
   String baseUrl = 'https://beta.mrdekk.ru/todo/';
-
-  MyHttpClient() {
-    init();
-  }
-
-  void init() async {}
 
   Future<List<Task>?> get() async {
     try {
@@ -22,7 +14,9 @@ class MyHttpClient {
           "Authorization": "Bearer Calion",
         },
       );
+
       if (response.statusCode != 200) return null;
+
       final map = jsonDecode(response.body) as Map<String, dynamic>;
       final list = (map['list'] as List<dynamic>)
           .map((e) => Task.fromMap(e as Map<String, dynamic>))
@@ -95,13 +89,42 @@ class MyHttpClient {
       return null;
     }
   }
-}
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+  Future<Task?> put(Task task) async {
+    try {
+      final body = jsonEncode({'element': task.toMap()});
+      final responce = await http.put(
+        Uri.parse('$baseUrl/list/${task.id}'),
+        headers: {
+          "Authorization": "Bearer Calion",
+          "X-Last-Known-Revision": '$revision',
+        },
+        body: body,
+      );
+      if (responce.statusCode != 200) return null;
+      final map = jsonDecode(responce.body) as Map<String, dynamic>;
+      revision = map['revision'];
+      return Task.fromMap(map['element']);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<Task?> delete(Task task) async {
+    try {
+      final responce = await http.delete(
+        Uri.parse('$baseUrl/list/${task.id}'),
+        headers: {
+          "Authorization": "Bearer Calion",
+          "X-Last-Known-Revision": '$revision',
+        },
+      );
+      if (responce.statusCode != 200) return null;
+      final map = jsonDecode(responce.body) as Map<String, dynamic>;
+      revision = map['revision'];
+      return Task.fromMap(map['element']);
+    } catch (_) {
+      return null;
+    }
   }
 }

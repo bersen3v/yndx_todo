@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_divider.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_text_field.dart';
@@ -9,31 +11,47 @@ import 'package:yndx_todo/features/add_task_page/presentation/widgets/date_picke
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/description.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/difficulty_slider.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/header.dart';
+import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
-class AddTaskScreen extends StatelessWidget {
+class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({
     super.key,
+    this.task,
   });
+
+  final Task? task;
+
+  @override
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
+}
+
+class _AddTaskScreenState extends State<AddTaskScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final Task task = (widget.task == null
+        ? RepositoryProvider.of<NewTaskService>(context).task
+        : widget.task!.clone());
+
+    return _AddTaskScreenView(task: task, editMode: widget.task != null);
+  }
+}
+
+class _AddTaskScreenView extends StatelessWidget {
+  const _AddTaskScreenView(
+      {super.key, required this.task, required this.editMode});
+
+  final Task task;
+  final bool editMode;
 
   @override
   Widget build(BuildContext context) {
-    final task = (ModalRoute.of(context)?.settings.arguments ??
-        Task(
-          importance: null,
-          text: null,
-        )) as Task;
-
     return Scaffold(
       appBar: AppBar(
-        leading: Row(
+        leading: const Row(
           children: [
-            IconButton(
-                icon: const Icon(
-                  CupertinoIcons.back,
-                  size: 40.0,
-                ),
-                onPressed: () => Navigator.pop(context)),
+            _BackButton(),
           ],
         ),
         backgroundColor: Styles.scaffoldBackgroundColor,
@@ -57,23 +75,28 @@ class AddTaskScreen extends StatelessWidget {
                   const Header(),
                   const Gap(35),
                   CustomTextField(
+                    task: task,
                     controller: TextEditingController()..text = task.text ?? '',
-                    labelText: 'Опиши задачу',
+                    labelText: S.of(context).describeTask,
                     onTap: () {},
                   ),
                   const Gap(30),
                   const CustomDivider(),
-                  const Description(text: 'Определи сложность'),
+                  Description(text: S.of(context).chooseDifficulty),
                   const Gap(30),
-                  DifficultySlider(task: task),
+                  DifficultySlider(
+                    task: task,
+                  ),
                   const DifficultySliderDescription(),
                   const Gap(30),
                   const CustomDivider(),
-                  const Description(text: 'Дедлайн'),
+                  Description(text: S.of(context).deadline),
                   const Gap(20),
-                  DatePicker(task: task),
+                  DatePicker(
+                    task: task,
+                  ),
                   const Gap(30),
-                  task.text == null
+                  !editMode
                       ? _OrangeButton(task: task)
                       : Column(
                           children: [
@@ -93,6 +116,25 @@ class AddTaskScreen extends StatelessWidget {
   }
 }
 
+class _BackButton extends StatelessWidget {
+  const _BackButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: const Icon(
+          CupertinoIcons.back,
+          size: 40.0,
+        ),
+        onPressed: () {
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          Navigator.pop(context);
+        });
+  }
+}
+
 class _RedButton extends StatelessWidget {
   const _RedButton({
     super.key,
@@ -105,9 +147,11 @@ class _RedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        Navigator.of(context).pop();
+        context
+            .read<HomePageBloc>()
+            .add(RemoveTaskEvent(task: task, context: context));
       },
-      text: 'Удалить',
+      text: S.of(context).delete,
       color: Styles.red,
     );
   }
@@ -125,9 +169,11 @@ class _GreenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        Navigator.of(context).pop();
+        context
+            .read<HomePageBloc>()
+            .add(ChangeTaskEvent(task: task, context: context));
       },
-      text: 'Сохранить',
+      text: S.of(context).save,
       color: Styles.green,
     );
   }
@@ -145,11 +191,11 @@ class _OrangeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       color: Styles.orange,
-      text: 'Добавить задачу',
+      text: S.of(context).addtask,
       onTap: () {
-        if (task.text != null && task.text != "") {
-          Navigator.of(context).pop();
-        }
+        context
+            .read<HomePageBloc>()
+            .add(AddTaskEvent(task: task, context: context));
       },
     );
   }

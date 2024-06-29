@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
       surfaceTintColor: Styles.scaffoldBackgroundColor,
       backgroundColor: Styles.scaffoldBackgroundColor,
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding: EdgeInsets.only(bottom: 15),
+        titlePadding: const EdgeInsets.only(bottom: 15),
         centerTitle: false,
         title: Header(
           completedTasks: completedTasks,

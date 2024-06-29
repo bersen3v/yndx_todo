@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_text_field.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
 class DatePicker extends StatefulWidget {
-  const DatePicker({super.key, required this.task});
+  const DatePicker({
+    super.key,
+    required this.task,
+  });
 
   final Task task;
 
@@ -24,10 +28,11 @@ class _DatePickerState extends State<DatePicker> {
     );
 
     if (pickedDate == null) return;
-
     datePickerController.text =
         '${pickedDate.day} ${numbersOfMonth[pickedDate.month]}';
+
     widget.task.deadline = pickedDate;
+    setState(() {});
   }
 
   @override
@@ -37,7 +42,7 @@ class _DatePickerState extends State<DatePicker> {
       controller: datePickerController
         ..text = (date != null)
             ? '${date.day} ${numbersOfMonth[date.month]}'
-            : 'Без дедлайна',
+            : S.of(context).noDeadline,
       readOnly: true,
       onTap: () {
         onTapFunction(context: context);

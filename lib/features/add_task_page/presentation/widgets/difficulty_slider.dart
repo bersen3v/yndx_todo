@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:yndx_todo/core/domain/entities/task.dart';
-import 'package:yndx_todo/core/enums/task_difficulty_enum.dart';
+import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
 class DifficultySlider extends StatefulWidget {
   const DifficultySlider({
@@ -131,7 +133,7 @@ class DifficultySliderDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,22 +141,22 @@ class DifficultySliderDescription extends StatelessWidget {
           SizedBox(
             width: 70,
             child: Text(
-              'легкая',
-              style: TextStyle(color: Styles.white),
+              S.of(context).easy,
+              style: const TextStyle(color: Styles.white),
             ),
           ),
           SizedBox(
             width: 70,
             child: Text(
-              'средняя',
-              style: TextStyle(color: Styles.white),
+              S.of(context).medium,
+              style: const TextStyle(color: Styles.white),
             ),
           ),
           SizedBox(
             width: 70,
             child: Text(
-              'сложная',
-              style: TextStyle(color: Styles.white),
+              S.of(context).hard,
+              style: const TextStyle(color: Styles.white),
             ),
           ),
         ],

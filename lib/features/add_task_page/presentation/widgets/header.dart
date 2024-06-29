@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
 class Header extends StatelessWidget {
   const Header({
@@ -8,11 +9,11 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.only(left: 10),
       child: Text(
-        'Новая\nзадача',
-        style: TextStyle(
+        S.of(context).newTask,
+        style: const TextStyle(
             height: 1,
             color: Styles.white,
             fontSize: 45,
