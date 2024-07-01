@@ -1,40 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
-import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
+import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/domain/new_task_inh_widget.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_divider.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_text_field.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/date_picker.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/description.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/difficulty_slider.dart';
-import 'package:yndx_todo/features/home_page/domain/tasks_inherited_widget.dart';
+import 'package:yndx_todo/features/add_task_page/presentation/widgets/header.dart';
+import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/header.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
-class AddTaskScreen extends StatelessWidget {
+class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({
     super.key,
-    required this.task,
+    this.task,
   });
 
+  final Task? task;
+
+  @override
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
+}
+
+class _AddTaskScreenState extends State<AddTaskScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final Task task = (widget.task == null
+        ? RepositoryProvider.of<NewTaskService>(context).task
+        : widget.task!.clone());
+
+    return _AddTaskScreenView(task: task, editMode: widget.task != null);
+  }
+}
+
+class _AddTaskScreenView extends StatelessWidget {
+  const _AddTaskScreenView(
+      {super.key, required this.task, required this.editMode});
+
   final Task task;
+  final bool editMode;
 
   @override
   Widget build(BuildContext context) {
-    final model = TasksInheritedWidget.of(context)!.model;
     return Scaffold(
       appBar: AppBar(
-        leading: Row(
+        leading: const Row(
           children: [
-            IconButton(
-                icon: const Icon(
-                  CupertinoIcons.back,
-                  size: 40.0,
-                ),
-                onPressed: () => Navigator.pop(context)),
+            _BackButton(),
           ],
         ),
         backgroundColor: Styles.scaffoldBackgroundColor,
@@ -42,53 +59,54 @@ class AddTaskScreen extends StatelessWidget {
         surfaceTintColor: Styles.scaffoldBackgroundColor,
       ),
       backgroundColor: Styles.scaffoldBackgroundColor,
-      body: NewTaskInheritedWidget(
-        task: task,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Styles.scaffoldBackgroundColor,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(30),
-                    const Header(),
-                    const Gap(35),
-                    CustomTextField(
-                      controller: TextEditingController()
-                        ..text = task.taskText ?? '',
-                      labelText: 'Опиши задачу',
-                      onTap: () {},
-                    ),
-                    const Gap(30),
-                    const CustomDivider(),
-                    const Description(text: 'Определи сложность'),
-                    const Gap(30),
-                    const DifficultySlider(),
-                    const DifficultySliderDescription(),
-                    const Gap(30),
-                    const CustomDivider(),
-                    const Description(text: 'Дедлайн'),
-                    const Gap(20),
-                    DatePicker(task: task),
-                    const Gap(30),
-                    task.taskText == null
-                        ? _OrangeButton(task: task, model: model)
-                        : Column(
-                            children: [
-                              _GreenButton(model: model, task: task),
-                              const Gap(10),
-                              _RedButton(model: model, task: task),
-                            ],
-                          ),
-                    const Gap(50),
-                  ],
-                ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Styles.scaffoldBackgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Gap(30),
+                  const Header(),
+                  const Gap(35),
+                  CustomTextField(
+                    task: task,
+                    controller: TextEditingController()..text = task.text ?? '',
+                    labelText: S.of(context).describeTask,
+                    onTap: () {},
+                  ),
+                  const Gap(30),
+                  const CustomDivider(),
+                  Description(text: S.of(context).chooseDifficulty),
+                  const Gap(30),
+                  DifficultySlider(
+                    task: task,
+                  ),
+                  const DifficultySliderDescription(),
+                  const Gap(30),
+                  const CustomDivider(),
+                  Description(text: S.of(context).deadline),
+                  const Gap(20),
+                  DatePicker(
+                    task: task,
+                  ),
+                  const Gap(30),
+                  !editMode
+                      ? _OrangeButton(task: task)
+                      : Column(
+                          children: [
+                            _GreenButton(task: task),
+                            const Gap(10),
+                            _RedButton(task: task),
+                          ],
+                        ),
+                  const Gap(50),
+                ],
               ),
             ),
           ),
@@ -98,27 +116,42 @@ class AddTaskScreen extends StatelessWidget {
   }
 }
 
+class _BackButton extends StatelessWidget {
+  const _BackButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: const Icon(
+          CupertinoIcons.back,
+          size: 40.0,
+        ),
+        onPressed: () {
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          Navigator.pop(context);
+        });
+  }
+}
+
 class _RedButton extends StatelessWidget {
   const _RedButton({
     super.key,
-    required this.model,
     required this.task,
   });
 
-  final Model model;
   final Task task;
 
   @override
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        LoggerInhWidget.of(context)!
-            .logger
-            .d('Нажатие на кнопку "удалить задачу"');
-        model.deleteTask(task);
-        Navigator.of(context).pop();
+        context
+            .read<HomePageBloc>()
+            .add(RemoveTaskEvent(task: task, context: context));
       },
-      text: 'Удалить',
+      text: S.of(context).delete,
       color: Styles.red,
     );
   }
@@ -127,24 +160,20 @@ class _RedButton extends StatelessWidget {
 class _GreenButton extends StatelessWidget {
   const _GreenButton({
     super.key,
-    required this.model,
     required this.task,
   });
 
-  final Model model;
   final Task task;
 
   @override
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        LoggerInhWidget.of(context)!
-            .logger
-            .d('Нажатие на кнопку "сохранить задачу"');
-        model.taskUpdate(task);
-        Navigator.of(context).pop();
+        context
+            .read<HomePageBloc>()
+            .add(ChangeTaskEvent(task: task, context: context));
       },
-      text: 'Сохранить',
+      text: S.of(context).save,
       color: Styles.green,
     );
   }
@@ -154,25 +183,19 @@ class _OrangeButton extends StatelessWidget {
   const _OrangeButton({
     super.key,
     required this.task,
-    required this.model,
   });
 
   final Task task;
-  final Model model;
 
   @override
   Widget build(BuildContext context) {
     return CustomButton(
       color: Styles.orange,
-      text: 'Добавить задачу',
+      text: S.of(context).addtask,
       onTap: () {
-        LoggerInhWidget.of(context)!
-            .logger
-            .d('Нажатие на кнопку "добавить задачу"');
-        if (task.taskText != null && task.taskText != "") {
-          model.addTask(task);
-          Navigator.of(context).pop();
-        }
+        context
+            .read<HomePageBloc>()
+            .add(AddTaskEvent(task: task, context: context));
       },
     );
   }
