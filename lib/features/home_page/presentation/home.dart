@@ -10,6 +10,7 @@ import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_app_
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/tasks.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets%20/view_switcher.dart';
+
 import 'package:yndx_todo/generated/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
