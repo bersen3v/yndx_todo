@@ -11,8 +11,8 @@ import 'package:yndx_todo/features/add_task_page/presentation/widgets/date_picke
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/description.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/difficulty_slider.dart';
 import 'package:yndx_todo/features/home_page/domain/tasks_inherited_widget.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/header.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets/custom_button.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets/header.dart';
 
 class AddTaskScreen extends StatelessWidget {
   const AddTaskScreen({

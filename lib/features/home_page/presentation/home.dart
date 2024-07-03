@@ -8,9 +8,9 @@ import 'package:yndx_todo/core/logger/logger_inh_widget.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/domain/tasks_inherited_widget.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_app_bar.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/custom_button.dart';
-import 'package:yndx_todo/features/home_page/presentation/widgets%20/tasks.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets/custom_app_bar.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets/custom_button.dart';
+import 'package:yndx_todo/features/home_page/presentation/widgets/tasks.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
