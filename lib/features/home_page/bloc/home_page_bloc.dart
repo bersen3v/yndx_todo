@@ -1,12 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meta/meta.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/logger.dart';
 import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/services/todo_service.dart';
-import 'package:yndx_todo/features/home_page/presentation/home.dart';
 
 part 'home_page_event.dart';
 part 'home_page_state.dart';
@@ -34,8 +34,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
   void _onRemoveTaskEvent(
       RemoveTaskEvent event, Emitter<HomePageState> emit) async {
     logger.d('remove task ${event.task.id}');
-    Navigator.push(event.context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()));
+    event.context.push('/');
     await _todoService.deleteTask(event.task);
     emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
     RepositoryProvider.of<NewTaskService>(event.context).resetTask();
@@ -45,8 +44,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       ChangeTaskEvent event, Emitter<HomePageState> emit) async {
     if (event.task.text != null && event.task.text != null) {
       logger.d('change task ${event.task.id}');
-      Navigator.push(event.context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
+      event.context.push('/');
       await _todoService.changeTask(event.task);
       emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
       RepositoryProvider.of<NewTaskService>(event.context).resetTask();
@@ -71,8 +69,9 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
 
   void _onAddTaskEvent(AddTaskEvent event, Emitter<HomePageState> emit) async {
     if (event.task.text != null && event.task.text != null) {
-      Navigator.push(event.context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
+      logger.d('АЛО БЛЯТЬ 0');
+      event.context.go('/');
+      logger.d('АЛО БЛЯТЬ');
 
       event.task
         ..changedAt = DateTime.now()

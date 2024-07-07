@@ -7,11 +7,17 @@ import 'package:yndx_todo/core/data/http_overrides.dart';
 import 'package:yndx_todo/core/logger.dart';
 
 void main() async {
-  runZonedGuarded(() async {
-    HttpOverrides.global = MyHttpOverrides();
-    await Hive.initFlutter();
-    runApp(const App());
-  }, (e, s) {
-    logger.e(e);
-  });
+  // runZonedGuarded(
+  //   () async {
+  //     HttpOverrides.global = MyHttpOverrides();
+  //     await Hive.initFlutter();
+  //     runApp(const Providers());
+  //   },
+  //   (e, s) {
+  //     logger.e(e, stackTrace: s);
+  //   },
+  // );
+  HttpOverrides.global = MyHttpOverrides();
+  await Hive.initFlutter();
+  runApp(const Providers());
 }

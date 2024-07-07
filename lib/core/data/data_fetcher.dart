@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/logger.dart';
 
 class MyHttpClient {
   late int revision;
@@ -23,7 +24,8 @@ class MyHttpClient {
           .toList();
       revision = map['revision'];
       return list;
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }
@@ -40,7 +42,8 @@ class MyHttpClient {
       final map = jsonDecode(response.body) as Map<String, dynamic>;
       revision = map['revision'];
       return Task.fromMap(map['element']);
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }
@@ -65,7 +68,8 @@ class MyHttpClient {
           .toList();
       revision = map['revision'];
       return list;
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }
@@ -85,7 +89,8 @@ class MyHttpClient {
       final map = jsonDecode(responce.body) as Map<String, dynamic>;
       revision = map['revision'];
       return Task.fromMap(map['element']);
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }
@@ -105,7 +110,8 @@ class MyHttpClient {
       final map = jsonDecode(responce.body) as Map<String, dynamic>;
       revision = map['revision'];
       return Task.fromMap(map['element']);
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }
@@ -123,7 +129,8 @@ class MyHttpClient {
       final map = jsonDecode(responce.body) as Map<String, dynamic>;
       revision = map['revision'];
       return Task.fromMap(map['element']);
-    } catch (_) {
+    } catch (error) {
+      logger.e(error);
       return null;
     }
   }

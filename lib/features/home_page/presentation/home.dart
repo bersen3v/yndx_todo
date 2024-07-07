@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/services/todo_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/custom_app_bar.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/custom_button.dart';
@@ -13,27 +13,12 @@ import 'package:yndx_todo/features/home_page/presentation/widgets/view_switcher.
 
 import 'package:yndx_todo/generated/l10n.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          HomePageBloc(RepositoryProvider.of<TodoService>(context))
-            ..add(RegisterServicesEvent()),
-      child: Navigator(
-        onPopPage: (route, result) => true,
-        pages: const [
-          MaterialPage(child: _HomeScreenView()),
-        ],
-      ),
-    );
+    return const _HomeScreenView();
   }
 }
 
@@ -161,8 +146,7 @@ class _Button extends StatelessWidget {
         color: Styles.orange,
         text: S.of(context).addtask,
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddTaskScreen()));
+          context.push('/addtask');
         },
       ),
     );

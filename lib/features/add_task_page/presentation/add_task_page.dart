@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
@@ -130,7 +131,7 @@ class _BackButton extends StatelessWidget {
         ),
         onPressed: () {
           RepositoryProvider.of<NewTaskService>(context).resetTask();
-          Navigator.pop(context);
+          context.go('/');
         });
   }
 }

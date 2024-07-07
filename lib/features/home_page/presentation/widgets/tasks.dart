@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
@@ -96,10 +97,7 @@ class _TaskView extends StatelessWidget {
     return GestureDetector(
       onTap: tasks.contains(task)
           ? () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddTaskScreen(task: task)));
+              context.go('/addtask');
             }
           : () {},
       child: done
