@@ -38,10 +38,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "noCompletedTasks": MessageLookupByLibrary.simpleMessage(
             "There are no completed tasks"),
         "noDeadline": MessageLookupByLibrary.simpleMessage("without deadline"),
+        "noInternet": MessageLookupByLibrary.simpleMessage(
+            "Нестабильное интернет соединение. Данные синхронизируются с другими устройствами как только появится соединение"),
         "noUncompletedTasks": MessageLookupByLibrary.simpleMessage(
             "There are no unfulfilled tasks, \nyou are cool!"),
+        "ohNo": MessageLookupByLibrary.simpleMessage("О нет!"),
         "save": MessageLookupByLibrary.simpleMessage("save"),
         "sync": MessageLookupByLibrary.simpleMessage(
-            "Синхронизация данных на всех устройствах. Да, получилось долговато, извиняюсь...")
+            "Я немного заморочился и сделал имитацию работы на нескольких устройствах. Но получилось немного долговато, буду оптимизировать")
       };
 }

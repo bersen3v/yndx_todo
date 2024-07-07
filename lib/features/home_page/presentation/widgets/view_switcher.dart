@@ -29,6 +29,7 @@ class _ViewSwitcherState extends State<ViewSwitcher> {
 
   @override
   Widget build(BuildContext context) {
+    _selectedIndex = context.read<HomePageBloc>().view;
     String left = S.of(context).inwork;
     String right = S.of(context).done;
     final List<String> variants = [

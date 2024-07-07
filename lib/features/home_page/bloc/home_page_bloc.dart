@@ -2,10 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meta/meta.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/logger.dart';
-import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/services/todo_service.dart';
 
 part 'home_page_event.dart';
@@ -33,29 +31,27 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
 
   void _onRemoveTaskEvent(
       RemoveTaskEvent event, Emitter<HomePageState> emit) async {
+    emit(RegisteringServicesState());
     logger.d('remove task ${event.task.id}');
-    event.context.push('/');
+    event.context.go('/');
     await _todoService.deleteTask(event.task);
-    emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
-    RepositoryProvider.of<NewTaskService>(event.context).resetTask();
+    emit(TodosLoadedState(view: view, tasks: _todoService.tasks));
   }
 
   void _onChangeTaskEvent(
       ChangeTaskEvent event, Emitter<HomePageState> emit) async {
-    if (event.task.text != null && event.task.text != null) {
-      logger.d('change task ${event.task.id}');
-      event.context.push('/');
-      await _todoService.changeTask(event.task);
-      emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
-      RepositoryProvider.of<NewTaskService>(event.context).resetTask();
-    }
+    emit(RegisteringServicesState());
+    logger.d('change task ${event.task.id}');
+    await _todoService.changeTask(event.task);
+    emit(TodosLoadedState(view: view, tasks: _todoService.tasks));
   }
 
   void _onRegisterServicesEvent(
       RegisterServicesEvent event, Emitter<HomePageState> emit) async {
     logger.d('registering services');
+    emit(RegisteringServicesState());
     await _todoService.init();
-    emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
+    emit(TodosLoadedState(view: view, tasks: _todoService.tasks));
   }
 
 // importance: importance,
@@ -68,21 +64,16 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
 //         lastUpdatedBy: lastUpdatedBy);
 
   void _onAddTaskEvent(AddTaskEvent event, Emitter<HomePageState> emit) async {
-    if (event.task.text != null && event.task.text != null) {
-      logger.d('АЛО БЛЯТЬ 0');
-      event.context.go('/');
-      logger.d('АЛО БЛЯТЬ');
+    emit(RegisteringServicesState());
+    event.task
+      ..changedAt = DateTime.now()
+      ..createdAt = DateTime.now()
+      ..done = false
+      ..id = DateTime.now().millisecondsSinceEpoch
+      ..lastUpdatedBy = 'ivan bersenev';
 
-      event.task
-        ..changedAt = DateTime.now()
-        ..createdAt = DateTime.now()
-        ..done = false
-        ..id = DateTime.now().millisecondsSinceEpoch
-        ..lastUpdatedBy = 'ivan bersenev';
-
-      await _todoService.addTask(event.task);
-      emit(TodosLoadedState(view: 0, tasks: _todoService.tasks));
-      RepositoryProvider.of<NewTaskService>(event.context).resetTask();
-    }
+    await _todoService.addTask(event.task);
+    view = 0;
+    emit(TodosLoadedState(view: view, tasks: _todoService.tasks));
   }
 }

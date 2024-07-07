@@ -6,7 +6,6 @@ import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/generated/l10n.dart';
 
@@ -97,7 +96,7 @@ class _TaskView extends StatelessWidget {
     return GestureDetector(
       onTap: tasks.contains(task)
           ? () {
-              context.go('/addtask');
+              if (!task.done!) context.push('/addtask', extra: task);
             }
           : () {},
       child: done
@@ -142,7 +141,7 @@ class _TaskView extends StatelessWidget {
               key: UniqueKey(),
               child: _TaskCard(
                 task: task,
-                doneTasks: [],
+                doneTasks: const [],
               ),
             ),
     );

@@ -11,25 +11,27 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  gap: 
-  cupertino_icons: 
-  logger: 
-  flutter_bloc: 
-  bloc: 
-  bloc_concurrency: 
-  http: 
-  isar_flutter_libs: 
-  hive: 
-  hive_flutter: 
-  collection: 
-  go_router:
+  gap: null
+  cupertino_icons: null
+  logger: null
+  flutter_bloc: null
+  bloc: null
+  bloc_concurrency: null
+  http: null
+  isar_flutter_libs: null
+  hive: null
+  hive_flutter: null
+  collection: null
+  go_router: null
+  flutter_intl: null
+  connectivity_plus:
 
 dev_dependencies:
   flutter_lints: ^4.0.0
-  build_runner: 
+  build_runner: null
   flutter_test:
     sdk: flutter
-  hive_generator: 
+  hive_generator: null
 
 flutter:
   uses-material-design: true

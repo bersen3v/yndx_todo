@@ -148,6 +148,7 @@ class _RedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
+        RepositoryProvider.of<NewTaskService>(context).resetTask();
         context
             .read<HomePageBloc>()
             .add(RemoveTaskEvent(task: task, context: context));
@@ -170,9 +171,13 @@ class _GreenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        context
-            .read<HomePageBloc>()
-            .add(ChangeTaskEvent(task: task, context: context));
+        if (task.text != null) {
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          context.go('/');
+          context
+              .read<HomePageBloc>()
+              .add(ChangeTaskEvent(task: task, context: context));
+        }
       },
       text: S.of(context).save,
       color: Styles.green,
@@ -194,9 +199,13 @@ class _OrangeButton extends StatelessWidget {
       color: Styles.orange,
       text: S.of(context).addtask,
       onTap: () {
-        context
-            .read<HomePageBloc>()
-            .add(AddTaskEvent(task: task, context: context));
+        if (task.text != null) {
+          context.go('/');
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          context
+              .read<HomePageBloc>()
+              .add(AddTaskEvent(task: task, context: context));
+        }
       },
     );
   }
