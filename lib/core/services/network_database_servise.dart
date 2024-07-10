@@ -2,8 +2,10 @@ import 'package:yndx_todo/core/data/data_fetcher.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 
 class NetworkDatabaseServise {
-  final client = MyHttpClient();
+  final MyHttpClient client;
   List<Task>? _tasks;
+
+  NetworkDatabaseServise({required this.client});
   List<Task>? get tasks => _tasks;
 
   Future<void> init() async {

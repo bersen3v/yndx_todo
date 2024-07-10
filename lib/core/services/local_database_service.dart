@@ -1,48 +1,42 @@
-import 'dart:io';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:yndx_todo/core/data/local_data_fetcher.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
-import 'package:yndx_todo/core/enums/importance.dart';
-import 'package:path/path.dart';
 import 'package:yndx_todo/core/logger.dart';
 
 class LocalDatabaseService {
-  final String boxname;
-  late Box<Task> _tasks;
+  late LocalDataFetcher db;
+  List<Task> get tasks => db.tasks();
 
-  LocalDatabaseService({required this.boxname});
-  List<Task> get tasks => _tasks.values.toList();
+  LocalDatabaseService({
+    required this.db,
+  });
 
   Future<void> init() async {
-    await Hive.initFlutter();
-    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(TaskAdapter());
-    if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(ImportanceAdapter());
-    _tasks = await Hive.openBox<Task>(boxname);
+    await db.init();
   }
 
   Future<void> addTask(final Task task) async {
-    if (!tasks.any((e) => e.id == task.id)) {
-      await _tasks.add(task.copyWith());
+    if (tasks.any((e) => e.id == task.id)) {
+      await db.addTask(task.copyWith());
     }
   }
 
   Future<void> removeTask(Task task) async {
     final taskToRemove = tasks.firstWhere((e) => e.id == task.id);
-    await taskToRemove.delete();
+    await db.removeTask(taskToRemove);
   }
 
   Future<void> updateTask(Task task) async {
     try {
-      final taskToEdit = _tasks.values.firstWhere((e) => e.id == task.id);
-      final index = taskToEdit.key as int;
-      await _tasks.put(index, task);
-    } catch (e) {}
+      await db.updateTask(task);
+    } catch (e) {
+      logger.e('$e, $task');
+    }
   }
 
   Future<void> addAll(List<Task> tasksNew) async {
     if (tasksNew.isNotEmpty) {
       for (Task task in tasksNew) {
-        await addTask(task);
+        await db.addTask(task);
       }
     }
   }
@@ -50,12 +44,12 @@ class LocalDatabaseService {
   Future<void> removeAll() async {
     if (tasks.isNotEmpty) {
       for (Task task in tasks) {
-        await removeTask(task);
+        await db.removeTask(task);
       }
     }
   }
 
   Future<void> closeDb() async {
-    _tasks.close();
+    await db.closeDb();
   }
 }

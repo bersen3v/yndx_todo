@@ -84,6 +84,7 @@ class _AddTaskScreenView extends StatelessWidget {
                   const Header(),
                   const Gap(35),
                   CustomTextField(
+                    key: const ValueKey('task_text'),
                     task: task,
                     controller: TextEditingController()..text = task.text ?? '',
                     labelText: S.of(context).describeTask,
@@ -113,7 +114,10 @@ class _AddTaskScreenView extends StatelessWidget {
                       ? _OrangeButton(task: task)
                       : Column(
                           children: [
-                            _GreenButton(task: task),
+                            _GreenButton(
+                              task: task,
+                              key: const ValueKey('add_task'),
+                            ),
                             const Gap(10),
                             _RedButton(task: task),
                           ],

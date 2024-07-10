@@ -186,6 +186,7 @@ class _LoadedView extends StatelessWidget {
             CustomScrollView(
               slivers: [
                 CustomAppBar(
+                  key: const ValueKey('blyat'),
                   completedTasks:
                       data.tasks.where((e) => e.done == true).length,
                   allTasks: data.tasks.length,
@@ -193,7 +194,9 @@ class _LoadedView extends StatelessWidget {
                 const _TaskList(),
               ],
             ),
-            const _Button()
+            const _Button(
+              key: ValueKey('blyat'),
+            )
           ],
         );
       },

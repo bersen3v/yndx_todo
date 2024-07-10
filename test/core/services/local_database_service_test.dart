@@ -1,47 +1,95 @@
-import 'dart:io';
-
-import 'package:flutter/widgets.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:test/test.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:yndx_todo/core/data/local_data_fetcher.dart';
+import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/enums/importance.dart';
+import 'package:yndx_todo/core/logger.dart';
 import 'package:yndx_todo/core/services/local_database_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final Directory dir = await getApplicationDocumentsDirectory();
-  print(dir.path);
+import 'network_database_srvice_test.dart';
 
-  await Hive.initFlutter();
-  setUpAll(() async {
-    print('setupall');
-    try {
-      await Hive.initFlutter();
-    } catch (e) {
-      print(e);
-    }
+class LocalDataFetcherMock extends Mock implements LocalDataFetcher {}
+
+void main() {
+  late LocalDatabaseService _dbService;
+  late LocalDataFetcherMock _dataFetcher;
+  late Task task;
+
+  setUpAll(() {
+    registerFallbackValue(FakeTask());
   });
 
-  test(
-    'метод init  1) создает хранилище данных с именем, переданным в конструктор класса 2) Регистрирует TaskAdapter и ImportanceAdapter 3) Инициализирует переменную _tasks содержимым локального хранилища',
-    () async {
-      //arrange
-      const String boxname = 'test';
-      final LocalDatabaseService _localDb =
-          LocalDatabaseService(boxname: boxname);
+  setUp(
+    () {
+      try {
+        _dataFetcher = LocalDataFetcherMock();
+        _dbService = LocalDatabaseService(db: _dataFetcher);
 
-      //act
-      print('startinit');
-      await _localDb.init();
-      print('init');
+        task = Task(
+          text: 'task',
+          deadline: DateTime(2024),
+          changedAt: DateTime(2025),
+          createdAt: DateTime(2026),
+          done: true,
+          importance: Importance.important,
+          lastUpdatedBy: 'vanya',
+          id: 123,
+        );
 
-      //expect
-      final tasks = _localDb.tasks.toList();
+        when(() => _dataFetcher.addTask(any()))
+            .thenAnswer((_) async => FakeTask());
 
-      expect(tasks.isEmpty, true);
-      expect(!Hive.isAdapterRegistered(2), true);
-      expect(!Hive.isAdapterRegistered(3), true);
+        when(() => _dataFetcher.tasks()).thenAnswer((_) => [task]);
 
-      _localDb.closeDb();
+        when(() => _dataFetcher.removeTask(any()))
+            .thenAnswer((_) async => FakeTask());
+
+        when(() => _dataFetcher.updateTask(any()))
+            .thenAnswer((_) async => FakeTask());
+      } catch (e) {
+        logger.e(e);
+      }
+    },
+  );
+
+  group(
+    'LocalDatabaseService',
+    () {
+      test(
+        'метод addTask должен выполнить обращение к базе с правильными аргументами',
+        () async {
+          await _dbService.addTask(task);
+
+          final verification =
+              verify(() => _dataFetcher.addTask(captureAny())).captured;
+
+          expect(verification.first, task);
+        },
+      );
+
+      test(
+        'метод removeTask должен выполнить обращение к базе с правильными аргументами',
+        () async {
+          await _dbService.removeTask(task);
+
+          final verification =
+              verify(() => _dataFetcher.removeTask(captureAny())).captured;
+
+          expect(verification.first, task);
+        },
+      );
+
+      test(
+        'метод updateTask должен выполнить обращение к базе с правильными аргументами',
+        () async {
+          await _dbService.updateTask(task);
+
+          final verification =
+              verify(() => _dataFetcher.updateTask(captureAny())).captured;
+
+          expect(verification.first, task);
+        },
+      );
     },
   );
 }
