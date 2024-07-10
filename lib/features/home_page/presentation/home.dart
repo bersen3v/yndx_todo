@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yndx_todo/core/data/data_fetcher.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
@@ -39,10 +40,17 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   void showNetworkMessage(context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         elevation: 10,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(10, 0, 10, 130),
+        margin: const EdgeInsets.fromLTRB(
+          10,
+          0,
+          10,
+          130,
+        ),
         backgroundColor: Styles.orange,
         content: const _ConnectionSnackBar(),
       ),
@@ -97,7 +105,10 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                           textAlign: TextAlign.center,
                           S.of(context).sync,
                           style: const TextStyle(
-                              color: Styles.grey06, fontSize: 25, height: 1),
+                            color: Styles.grey06,
+                            fontSize: 25,
+                            height: 1,
+                          ),
                         ),
                       ),
                       const Gap(20),
@@ -147,7 +158,9 @@ class _ConnectionSnackBar extends StatelessWidget {
                     S.of(context).ohNo,
                     style: const TextStyle(color: Styles.white, fontSize: 24),
                   ),
-                  Text(S.of(context).noInternet),
+                  Text(
+                    S.of(context).noInternet,
+                  ),
                 ],
               ),
             ),
@@ -219,6 +232,22 @@ class _TaskListState extends State<_TaskList> {
                     done: true,
                     doneTasks: doneTasks,
                   ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: CustomButton(
+                onTap: () {
+                  try {
+                    launchUrl(Uri.parse(
+                        'https://bersen3v.github.io/deeplinks.github.io/'));
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                text:
+                    'протестить диплинк. {Кнопка ведёт на сайт, который уводит в диплинк, ведущий на страницу добавления задачи}',
+                color: Styles.grey06,
+              ),
+            ),
             const Gap(150),
           ],
         );

@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
+import 'package:path/path.dart';
+import 'package:yndx_todo/core/logger.dart';
 
 class LocalDatabaseService {
   final String boxname;
@@ -10,6 +14,7 @@ class LocalDatabaseService {
   List<Task> get tasks => _tasks.values.toList();
 
   Future<void> init() async {
+    await Hive.initFlutter();
     if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(TaskAdapter());
     if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(ImportanceAdapter());
     _tasks = await Hive.openBox<Task>(boxname);
@@ -48,5 +53,9 @@ class LocalDatabaseService {
         await removeTask(task);
       }
     }
+  }
+
+  Future<void> closeDb() async {
+    _tasks.close();
   }
 }

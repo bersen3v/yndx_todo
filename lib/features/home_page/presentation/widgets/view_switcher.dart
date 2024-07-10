@@ -67,9 +67,10 @@ class _ViewSwitcherState extends State<ViewSwitcher> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: view),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: view,
+              ),
             ),
           ),
           const _RoundedCorner(alignment: AlignmentDirectional.bottomStart)
@@ -94,19 +95,29 @@ class _Tab extends StatelessWidget {
     return selected
         ? Container(
             decoration: BoxDecoration(
-                color: Styles.orange, borderRadius: BorderRadius.circular(13)),
+              color: Styles.orange,
+              borderRadius: BorderRadius.circular(13),
+            ),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(22, 6, 22, 8),
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 18, color: Styles.white),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Styles.white,
+                  ),
                 ),
               ),
             ),
           )
         : Padding(
-            padding: const EdgeInsets.fromLTRB(22, 6, 22, 8),
+            padding: const EdgeInsets.fromLTRB(
+              22,
+              6,
+              22,
+              8,
+            ),
             child: Row(
               children: [
                 Text(

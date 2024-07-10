@@ -12,10 +12,16 @@ class Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, top: 20),
+      padding: const EdgeInsets.only(
+        left: 10,
+        top: 20,
+      ),
       child: Text(
         text,
-        style: const TextStyle(color: Styles.white, fontSize: 20),
+        style: const TextStyle(
+          color: Styles.white,
+          fontSize: 20,
+        ),
       ),
     );
   }

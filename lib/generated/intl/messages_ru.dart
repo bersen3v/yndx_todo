@@ -41,7 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noInternet": MessageLookupByLibrary.simpleMessage(
             "Нестабильное интернет соединение. Данные синхронизируются с другими устройствами как только появится соединение"),
         "noUncompletedTasks": MessageLookupByLibrary.simpleMessage(
-            "Невыполненных задач нет,\\nты крут!"),
+            "Невыполненных задач нет,\nты крут!"),
         "ohNo": MessageLookupByLibrary.simpleMessage("О нет!"),
         "save": MessageLookupByLibrary.simpleMessage("Сохранить"),
         "sync": MessageLookupByLibrary.simpleMessage(

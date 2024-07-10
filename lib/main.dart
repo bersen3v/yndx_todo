@@ -16,6 +16,6 @@ void main() async {
   //   },
   // );
   HttpOverrides.global = MyHttpOverrides();
-  await Hive.initFlutter();
-  runApp(const Providers());
+  Hive.initFlutter();
+  runApp(const App());
 }
