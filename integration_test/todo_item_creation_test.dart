@@ -1,130 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:mocktail/mocktail.dart';
 
+import 'package:yndx_todo/core/enums/evvironment.dart';
 
-//Если есть такая возможность, зайди сюда завтра... Буду очень благодарен
+import 'package:yndx_todo/core/router/router.dart';
+import 'package:yndx_todo/core/services/new_task_service.dart';
+import 'package:yndx_todo/core/services/todo_service.dart';
+import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
+import 'package:yndx_todo/generated/l10n.dart';
 
+import '../test/core/services/network_database_srvice_test.dart';
 
+class TodoServiceMock extends Mock implements TodoService {}
 
+class DIContainerMock {
+  final TodoServiceMock todoService;
+  DIContainerMock({
+    required this.todoService,
+  });
+  final _newTaskService = NewTaskService();
 
+  Widget diProvider(BuildContext context, {required Widget child}) {
+    return BlocProvider(
+      create: (context) => HomePageBloc(todoService),
+      child: MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider(create: (context) => _newTaskService),
+        ],
+        child: child,
+      ),
+    );
+  }
+}
 
-// void main() {
-//   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+class AppMock extends StatelessWidget {
+  const AppMock(
+      {super.key,
+      this.environment = Environment.test,
+      required this.todoServiceMock});
 
-//   final _task1 = Task(
-//     text: 'task',
-//     deadline: DateTime(2024),
-//     changedAt: DateTime(2025),
-//     createdAt: DateTime(2026),
-//     done: true,
-//     importance: Importance.important,
-//     lastUpdatedBy: 'vanya',
-//     id: 1,
-//   );
-//   final _task2 = Task(
-//     text: 'task',
-//     deadline: DateTime(2024),
-//     changedAt: DateTime(2025),
-//     createdAt: DateTime(2026),
-//     done: true,
-//     importance: Importance.important,
-//     lastUpdatedBy: 'vanya',
-//     id: 2,
-//   );
-//   final _task3 = Task(
-//     text: 'task',
-//     deadline: DateTime(2024),
-//     changedAt: DateTime(2025),
-//     createdAt: DateTime(2026),
-//     done: true,
-//     importance: Importance.important,
-//     lastUpdatedBy: 'vanya',
-//     id: 3,
-//   );
-//   final _task4 = Task(
-//     text: 'task',
-//     deadline: DateTime(2024),
-//     changedAt: DateTime(2025),
-//     createdAt: DateTime(2026),
-//     done: true,
-//     importance: Importance.important,
-//     lastUpdatedBy: 'vanya',
-//     id: 4,
-//   );
+  final Environment environment;
+  final TodoServiceMock todoServiceMock;
 
-//   group('OnTap по кнопке создания Todo', () {
-//     testWidgets('должен создавать новый элемент TodoItem в списке задач',
-//         (widgetTester) async {
-//       //  arrange
-//       final todos = [];
+  @override
+  Widget build(BuildContext context) {
+    return DIContainerMock(todoService: todoServiceMock).diProvider(
+      context,
+      child: MaterialApp.router(
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        theme: ThemeData(
+          fontFamily: 'sfpro',
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+      ),
+    );
+  }
+}
 
-//       await widgetTester.pumpWidget(
-//         const App(
-//           environment: Environment.test,
-//         ),
-//       );
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  TodoServiceMock _todoServiceMock = TodoServiceMock();
 
-//       final widget1 = find.byType(Scaffold);
-//       print(widget1);
-//       final widget = find.byKey(const ValueKey('blyat'));
-//       print(widget);
+  setUpAll(() {
+    registerFallbackValue(FakeTask());
+  });
 
-//       // await widgetTester.tap(fab);
-//       // await widgetTester.pumpAndSettle(const Duration(seconds: 5));
+  setUp(() {
+    when(() => _todoServiceMock.addTask(any()))
+        .thenAnswer((_) async => FakeTask());
+  });
 
-//       // await widgetTester.enterText(
-//       //     find.byKey(const ValueKey('task_text')), 'task test 12121231');
-//       // await widgetTester.testTextInput.receiveAction(TextInputAction.done);
-//       // await widgetTester.pumpAndSettle();
+  group('OnTap по кнопке создания Todo', () {
+    testWidgets('должен создавать новый элемент TodoItem в списке задач',
+        (widgetTester) async {
+      await widgetTester.pumpWidget(AppMock(
+        todoServiceMock: _todoServiceMock,
+      ));
 
-//       // await widgetTester.tap(find.byKey(const ValueKey('add_task')));
-//       // await widgetTester.pumpAndSettle();
-
-//       print('');
-
-//       // final listFinder = find.byType(Scrollable);
-//       // final key = ValueKey('item_$lastTodoId');
-//       // final byKeyFinder = find.byKey(key);
-
-//       // //  scroll to new created todo_item element
-//       // await widgetTester.scrollUntilVisible(
-//       //   byKeyFinder,
-//       //   100.0,
-//       //   scrollable: listFinder,
-//       // );
-
-//       // //  assert
-//       // expect(byKeyFinder, findsOneWidget);
-//     });
-//   });
-
-//   // group('OnTap по иконке завершения', () {
-//   //   testWidgets('должен переводить модель Todo в завершенное состояние',
-//   //       (widgetTester) async {
-//   //     //  arrange
-//   //     final todoList = DI.todoRepository.fetchAll();
-//   //     await widgetTester.pumpWidget(
-//   //       const MyApp(
-//   //         environment: Environment.test,
-//   //       ),
-//   //     );
-
-//   //     //  act
-//   //     const completedTodosCount = 5;
-//   //     final totalCount = todoList.length;
-
-//   //     for (var i = 0; i < completedTodosCount; i++) {
-//   //       //  комплитим таску
-//   //       final itemIconFinder = find.byKey(ValueKey('item_icon_${i + 1}'));
-//   //       await widgetTester.tap(itemIconFinder);
-//   //       await widgetTester.pumpAndSettle();
-//   //     }
-
-//   //     //  assert
-//   //     final items = widgetTester.allWidgets.whereType<TodoItemWidget>();
-//   //     expect(items.length, totalCount);
-
-//   //     final pageState = widgetTester.allStates.whereType<TodoPageState>().first;
-//   //     expect(pageState.todos.where((e) => e.isCompleted).length,
-//   //         completedTodosCount);
-//   //   });
-//   // });
-// }
+      final item = find.byKey(const ValueKey('home_button_add'));
+      await widgetTester.tap(item);
+      await widgetTester.pumpAndSettle();
+    });
+  });
+}

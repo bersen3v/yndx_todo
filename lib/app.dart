@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:yndx_todo/core/di.dart';
 import 'package:yndx_todo/core/enums/evvironment.dart';
 import 'package:yndx_todo/core/router/router.dart';
-
 import 'package:yndx_todo/generated/l10n.dart';
 
 class App extends StatelessWidget {

@@ -21,20 +21,20 @@ class LocalDataFetcherMock extends Mock implements LocalDataFetcher {}
 //Исключением является метод, отвечающий за валидацию и сопоставление информации из разных источников
 
 void main() {
-  late NetworkDatabaseServise _networkDb;
-  late MyHttpClient _clientMock;
+  late NetworkDatabaseServise networkDb;
+  late MyHttpClient clientMock;
 
-  late LocalDatabaseService _localDb;
-  late LocalDatabaseService _localNetworkCopy;
-  late LocalDatabaseService _localDeletedDb;
-  late LocalDataFetcherMock _localDataFetcher;
+  late LocalDatabaseService localDb;
+  late LocalDatabaseService localNetworkCopy;
+  late LocalDatabaseService localDeletedDb;
+  late LocalDataFetcherMock localDataFetcher;
 
-  late TodoService _todoService;
+  late TodoService todoService;
 
-  late Task _task1;
-  late Task _task2;
-  late Task _task3;
-  late Task _task4;
+  late Task task1;
+  late Task task2;
+  late Task task3;
+  late Task task4;
 
   setUpAll(() {
     registerFallbackValue(FakeTask());
@@ -42,7 +42,7 @@ void main() {
 
   setUp(
     () async {
-      _task1 = Task(
+      task1 = Task(
         text: 'task',
         deadline: DateTime(2024),
         changedAt: DateTime(2025),
@@ -52,7 +52,7 @@ void main() {
         lastUpdatedBy: 'vanya',
         id: 1,
       );
-      _task2 = Task(
+      task2 = Task(
         text: 'task',
         deadline: DateTime(2024),
         changedAt: DateTime(2025),
@@ -62,7 +62,7 @@ void main() {
         lastUpdatedBy: 'vanya',
         id: 2,
       );
-      _task3 = Task(
+      task3 = Task(
         text: 'task',
         deadline: DateTime(2024),
         changedAt: DateTime(2025),
@@ -72,7 +72,7 @@ void main() {
         lastUpdatedBy: 'vanya',
         id: 3,
       );
-      _task4 = Task(
+      task4 = Task(
         text: 'task',
         deadline: DateTime(2024),
         changedAt: DateTime(2025),
@@ -83,19 +83,19 @@ void main() {
         id: 4,
       );
 
-      _clientMock = MyHttpClient();
-      _networkDb = NetworkDatabaseServise(client: _clientMock);
+      clientMock = MyHttpClient();
+      networkDb = NetworkDatabaseServise(client: clientMock);
 
-      _localDataFetcher = LocalDataFetcherMock();
-      _localNetworkCopy = LocalDatabaseService(db: _localDataFetcher);
-      _localDb = LocalDatabaseService(db: _localDataFetcher);
-      _localDeletedDb = LocalDatabaseService(db: _localDataFetcher);
+      localDataFetcher = LocalDataFetcherMock();
+      localNetworkCopy = LocalDatabaseService(db: localDataFetcher);
+      localDb = LocalDatabaseService(db: localDataFetcher);
+      localDeletedDb = LocalDatabaseService(db: localDataFetcher);
 
-      _todoService = TodoService(
-        localDb: _localDb,
-        localDeletedDd: _localDeletedDb,
-        localNetworkCopy: _localNetworkCopy,
-        networkDb: _networkDb,
+      todoService = TodoService(
+        localDb: localDb,
+        localDeletedDd: localDeletedDb,
+        localNetworkCopy: localNetworkCopy,
+        networkDb: networkDb,
       );
 
       // when(() => _clientMock.post(any())).thenAnswer((_) async => FakeTask());
@@ -127,21 +127,21 @@ void main() {
         'analyzeConflicts анализирует содержимое локальной и удаленной баз данных и возвращает их объединение и недостающие части баз данных, если такие имеются',
         () async {
           final local = [
-            _task1,
-            _task2,
+            task1,
+            task2,
           ];
 
           final network = [
-            _task2,
-            _task3,
-            _task4,
+            task2,
+            task3,
+            task4,
           ];
 
-          await _todoService.analyzeConflicts(local, network);
+          await todoService.analyzeConflicts(local, network);
 
-          expect(_todoService.union, [_task1, _task2, _task3, _task4]);
-          expect(_todoService.addToLocal, [_task3, _task4]);
-          expect(_todoService.addToNetwork, [_task1]);
+          expect(todoService.union, [task1, task2, task3, task4]);
+          expect(todoService.addToLocal, [task3, task4]);
+          expect(todoService.addToNetwork, [task1]);
         },
       );
 
@@ -152,11 +152,11 @@ void main() {
 
           final List<Task> network = [];
 
-          await _todoService.analyzeConflicts(local, network);
+          await todoService.analyzeConflicts(local, network);
 
-          expect(_todoService.union, []);
-          expect(_todoService.addToLocal, []);
-          expect(_todoService.addToNetwork, []);
+          expect(todoService.union, []);
+          expect(todoService.addToLocal, []);
+          expect(todoService.addToNetwork, []);
         },
       );
 
@@ -164,18 +164,18 @@ void main() {
         'analyzeConflicts анализирует содержимое локальной и удаленной баз данных и возвращает их объединение и недостающие части баз данных, если такие имеются',
         () async {
           final local = [
-            _task1,
+            task1,
           ];
 
           final network = [
-            _task1,
+            task1,
           ];
 
-          await _todoService.analyzeConflicts(local, network);
+          await todoService.analyzeConflicts(local, network);
 
-          expect(_todoService.union, [_task1]);
-          expect(_todoService.addToLocal, []);
-          expect(_todoService.addToNetwork, []);
+          expect(todoService.union, [task1]);
+          expect(todoService.addToLocal, []);
+          expect(todoService.addToNetwork, []);
         },
       );
 
@@ -183,18 +183,18 @@ void main() {
         'analyzeConflicts анализирует содержимое локальной и удаленной баз данных и возвращает их объединение и недостающие части баз данных, если такие имеются',
         () async {
           final local = [
-            _task1,
-            _task2,
-            _task3,
+            task1,
+            task2,
+            task3,
           ];
 
           final List<Task> network = [];
 
-          await _todoService.analyzeConflicts(local, network);
+          await todoService.analyzeConflicts(local, network);
 
-          expect(_todoService.union, [_task1, _task2, _task3]);
-          expect(_todoService.addToLocal, []);
-          expect(_todoService.addToNetwork, [_task1, _task2, _task3]);
+          expect(todoService.union, [task1, task2, task3]);
+          expect(todoService.addToLocal, []);
+          expect(todoService.addToNetwork, [task1, task2, task3]);
         },
       );
     },
