@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yndx_todo/core/data/data_fetcher.dart';
+import 'package:yndx_todo/core/logger.dart';
+import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
+import 'package:yndx_todo/core/theme/cubit/change_theme_cubit.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/custom_app_bar.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/custom_button.dart';
@@ -88,7 +90,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   Widget build(BuildContext context) {
     context.read<HomePageBloc>().add(RegisterServicesEvent());
     return Scaffold(
-      backgroundColor: Styles.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: BlocBuilder<HomePageBloc, HomePageState>(
         builder: (context, state) {
           hasNetwork(context);
@@ -156,7 +158,10 @@ class _ConnectionSnackBar extends StatelessWidget {
                 children: [
                   Text(
                     S.of(context).ohNo,
-                    style: const TextStyle(color: Styles.white, fontSize: 24),
+                    style: const TextStyle(
+                      color: Styles.white,
+                      fontSize: 24,
+                    ),
                   ),
                   Text(
                     S.of(context).noInternet,
@@ -220,38 +225,54 @@ class _TaskListState extends State<_TaskList> {
         final data = state as TodosLoadedState;
         final tasks = data.tasks.where((e) => e.done != true).toList();
         final doneTasks = data.tasks.where((e) => e.done == true).toList();
+
+        List<Widget> children = [
+          const Gap(30),
+          Switch(
+            value: context.read<ChangeThemeCubit>().state.brightness ==
+                Brightness.dark,
+            onChanged: (bool state) {
+              final cubit = context.read<ChangeThemeCubit>();
+              cubit.changeThemeBrightness();
+            },
+          ),
+          ViewSwitcher(
+            inWork: '${tasks.length}',
+            done: '${doneTasks.length}',
+          ),
+          context.read<HomePageBloc>().view == 0
+              ? Tasks(
+                  tasks: tasks,
+                  doneTasks: doneTasks,
+                )
+              : Tasks(
+                  tasks: doneTasks,
+                  done: true,
+                  doneTasks: doneTasks,
+                ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CustomButton(
+              onTap: () {
+                try {
+                  launchUrl(
+                    Uri.parse(
+                      'https://bersen3v.github.io/deeplinks.github.io/',
+                    ),
+                  );
+                } catch (e) {
+                  logger.e(e);
+                }
+              },
+              text:
+                  'протестить диплинк. {Кнопка ведёт на сайт, который уводит в диплинк, ведущий на страницу добавления задачи}',
+              color: Styles.grey06,
+            ),
+          ),
+          const Gap(150),
+        ];
         return SliverList.list(
-          children: [
-            const Gap(30),
-            ViewSwitcher(
-              inWork: '${tasks.length}',
-              done: '${doneTasks.length}',
-            ),
-            context.read<HomePageBloc>().view == 0
-                ? Tasks(tasks: tasks, doneTasks: doneTasks)
-                : Tasks(
-                    tasks: doneTasks,
-                    done: true,
-                    doneTasks: doneTasks,
-                  ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: CustomButton(
-                onTap: () {
-                  try {
-                    launchUrl(Uri.parse(
-                        'https://bersen3v.github.io/deeplinks.github.io/'));
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                text:
-                    'протестить диплинк. {Кнопка ведёт на сайт, который уводит в диплинк, ведущий на страницу добавления задачи}',
-                color: Styles.grey06,
-              ),
-            ),
-            const Gap(150),
-          ],
+          children: children,
         );
       },
     );
@@ -273,7 +294,7 @@ class _Button extends StatelessWidget {
         color: Styles.orange,
         text: S.of(context).addtask,
         onTap: () {
-          context.push('/addtask');
+          NavigationManager.goToAddTaskScreen(context);
         },
       ),
     );

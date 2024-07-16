@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/add_task_page/presentation/widgets/custom_divider.dart';
@@ -191,7 +192,7 @@ class _GreenButton extends StatelessWidget {
       onTap: () {
         if (task.text != null) {
           RepositoryProvider.of<NewTaskService>(context).resetTask();
-          context.go('/');
+          NavigationManager.goToMainScreen(context);
           context.read<HomePageBloc>().add(ChangeTaskEvent(
                 task: task,
                 context: context,
@@ -219,7 +220,7 @@ class _OrangeButton extends StatelessWidget {
       text: S.of(context).addtask,
       onTap: () {
         if (task.text != null) {
-          context.go('/');
+          NavigationManager.goToMainScreen(context);
           RepositoryProvider.of<NewTaskService>(context).resetTask();
           context.read<HomePageBloc>().add(
                 AddTaskEvent(task: task, context: context),
