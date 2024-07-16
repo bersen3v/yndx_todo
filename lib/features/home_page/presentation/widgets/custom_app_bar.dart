@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/header.dart';
 
 class CustomAppBar extends StatelessWidget {
