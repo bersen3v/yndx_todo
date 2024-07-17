@@ -5,6 +5,7 @@ import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/core/firebase/analytics.dart';
+import 'package:yndx_todo/core/firebase/remote_config_service.dart';
 import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
@@ -273,8 +274,8 @@ class _DeadlineText extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10),
       child: Text(
         ddl!,
-        style: const TextStyle(
-          color: Styles.grey06,
+        style: TextStyle(
+          color: firebaseRemoteConfigService.getTaskColor(),
           fontSize: 19,
         ),
       ),

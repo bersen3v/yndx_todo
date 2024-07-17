@@ -24,10 +24,6 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
 
-      final firebaseRemoteConfigService = FirebaseRemoteConfigService(
-        firebaseRemoteConfig: FirebaseRemoteConfig.instance,
-      );
-
       await firebaseRemoteConfigService.init();
 
       FlutterError.onError =
@@ -44,11 +40,10 @@ void main() async {
 
       analytics.setAnalyticsCollectionEnabled(true);
 
-      firebaseRemoteConfigService.getTaskColor();
       runApp(const App());
     },
     (e, s) {
-      logger.e(e, stackTrace: s);
+      logger.d(e, stackTrace: s);
     },
   );
 }

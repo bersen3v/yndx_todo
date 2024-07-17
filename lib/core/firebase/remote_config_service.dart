@@ -1,5 +1,11 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/material.dart';
 import 'package:yndx_todo/core/logger.dart';
+import 'package:yndx_todo/core/styles/styles.dart';
+
+final firebaseRemoteConfigService = FirebaseRemoteConfigService(
+  firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+);
 
 class FirebaseRemoteConfigService {
   const FirebaseRemoteConfigService({
@@ -19,13 +25,13 @@ class FirebaseRemoteConfigService {
       );
       await firebaseRemoteConfig.fetchAndActivate();
     } catch (e) {
-      logger.e(e);
+      logger.d(e);
     }
   }
 
-  String getTaskColor() {
+  Color getTaskColor() {
     String answer = firebaseRemoteConfig.getString('color');
-    logger.e(answer);
-    return answer;
+    Color color = answer == 'red' ? Colors.red : Styles.grey06;
+    return color;
   }
 }
