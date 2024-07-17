@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
@@ -34,13 +35,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ? RepositoryProvider.of<NewTaskService>(context).task
         : widget.task!.clone());
 
-    return _AddTaskScreenView(task: task, editMode: widget.task != null);
+    return _AddTaskScreenView(
+      task: task,
+      editMode: widget.task != null,
+    );
   }
 }
 
 class _AddTaskScreenView extends StatelessWidget {
-  const _AddTaskScreenView(
-      {super.key, required this.task, required this.editMode});
+  const _AddTaskScreenView({
+    super.key,
+    required this.task,
+    required this.editMode,
+  });
 
   final Task task;
   final bool editMode;
@@ -62,7 +69,9 @@ class _AddTaskScreenView extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           color: Styles.scaffoldBackgroundColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+          ),
         ),
         child: SingleChildScrollView(
           child: Padding(
@@ -75,6 +84,7 @@ class _AddTaskScreenView extends StatelessWidget {
                   const Header(),
                   const Gap(35),
                   CustomTextField(
+                    key: const ValueKey('task_text'),
                     task: task,
                     controller: TextEditingController()..text = task.text ?? '',
                     labelText: S.of(context).describeTask,
@@ -82,7 +92,9 @@ class _AddTaskScreenView extends StatelessWidget {
                   ),
                   const Gap(30),
                   const CustomDivider(),
-                  Description(text: S.of(context).chooseDifficulty),
+                  Description(
+                    text: S.of(context).chooseDifficulty,
+                  ),
                   const Gap(30),
                   DifficultySlider(
                     task: task,
@@ -90,7 +102,9 @@ class _AddTaskScreenView extends StatelessWidget {
                   const DifficultySliderDescription(),
                   const Gap(30),
                   const CustomDivider(),
-                  Description(text: S.of(context).deadline),
+                  Description(
+                    text: S.of(context).deadline,
+                  ),
                   const Gap(20),
                   DatePicker(
                     task: task,
@@ -100,7 +114,10 @@ class _AddTaskScreenView extends StatelessWidget {
                       ? _OrangeButton(task: task)
                       : Column(
                           children: [
-                            _GreenButton(task: task),
+                            _GreenButton(
+                              task: task,
+                              key: const ValueKey('add_task'),
+                            ),
                             const Gap(10),
                             _RedButton(task: task),
                           ],
@@ -124,14 +141,15 @@ class _BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        icon: const Icon(
-          CupertinoIcons.back,
-          size: 40.0,
-        ),
-        onPressed: () {
-          RepositoryProvider.of<NewTaskService>(context).resetTask();
-          Navigator.pop(context);
-        });
+      icon: const Icon(
+        CupertinoIcons.back,
+        size: 40.0,
+      ),
+      onPressed: () {
+        RepositoryProvider.of<NewTaskService>(context).resetTask();
+        context.go('/');
+      },
+    );
   }
 }
 
@@ -147,9 +165,11 @@ class _RedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        context
-            .read<HomePageBloc>()
-            .add(RemoveTaskEvent(task: task, context: context));
+        RepositoryProvider.of<NewTaskService>(context).resetTask();
+        context.read<HomePageBloc>().add(RemoveTaskEvent(
+              task: task,
+              context: context,
+            ));
       },
       text: S.of(context).delete,
       color: Styles.red,
@@ -169,9 +189,14 @@ class _GreenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
-        context
-            .read<HomePageBloc>()
-            .add(ChangeTaskEvent(task: task, context: context));
+        if (task.text != null) {
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          context.go('/');
+          context.read<HomePageBloc>().add(ChangeTaskEvent(
+                task: task,
+                context: context,
+              ));
+        }
       },
       text: S.of(context).save,
       color: Styles.green,
@@ -193,9 +218,13 @@ class _OrangeButton extends StatelessWidget {
       color: Styles.orange,
       text: S.of(context).addtask,
       onTap: () {
-        context
-            .read<HomePageBloc>()
-            .add(AddTaskEvent(task: task, context: context));
+        if (task.text != null) {
+          context.go('/');
+          RepositoryProvider.of<NewTaskService>(context).resetTask();
+          context.read<HomePageBloc>().add(
+                AddTaskEvent(task: task, context: context),
+              );
+        }
       },
     );
   }

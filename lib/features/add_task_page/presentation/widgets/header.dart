@@ -10,14 +10,15 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.only(left: 10),
       child: Text(
         S.of(context).newTask,
         style: const TextStyle(
-            height: 1,
-            color: Styles.white,
-            fontSize: 45,
-            fontWeight: FontWeight.w500),
+          height: 1,
+          color: Styles.white,
+          fontSize: 45,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

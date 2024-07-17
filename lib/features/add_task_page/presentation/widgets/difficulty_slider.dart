@@ -94,12 +94,14 @@ class _StopPoints extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: _StopPoint(color: _color)),
+          padding: const EdgeInsets.only(left: 20),
+          child: _StopPoint(color: _color),
+        ),
         _StopPoint(color: _color),
         Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: _StopPoint(color: _color)),
+          padding: const EdgeInsets.only(right: 20),
+          child: _StopPoint(color: _color),
+        ),
       ],
     );
   }

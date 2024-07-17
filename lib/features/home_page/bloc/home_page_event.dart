@@ -20,14 +20,20 @@ class ChangeTaskEvent extends HomePageEvent {
   final Task task;
   final BuildContext context;
 
-  ChangeTaskEvent({required this.task, required this.context});
+  ChangeTaskEvent({
+    required this.task,
+    required this.context,
+  });
 }
 
 class RemoveTaskEvent extends HomePageEvent {
   final Task task;
   final BuildContext context;
 
-  RemoveTaskEvent({required this.task, required this.context});
+  RemoveTaskEvent({
+    required this.task,
+    required this.context,
+  });
 }
 
 class ToggleScreenEvent extends HomePageEvent {

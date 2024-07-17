@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
-import 'package:yndx_todo/features/add_task_page/presentation/add_task_page.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/generated/l10n.dart';
 
@@ -44,9 +44,10 @@ class Tasks extends StatelessWidget {
                               S.of(context).noCompletedTasks,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  color: Styles.grey06,
-                                  fontSize: 25,
-                                  height: 1),
+                                color: Styles.grey06,
+                                fontSize: 25,
+                                height: 1,
+                              ),
                             ),
                           )
                         : Center(
@@ -54,20 +55,23 @@ class Tasks extends StatelessWidget {
                               S.of(context).noUncompletedTasks,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  color: Styles.grey06,
-                                  fontSize: 25,
-                                  height: 1),
+                                color: Styles.grey06,
+                                fontSize: 25,
+                                height: 1,
+                              ),
                             ),
                           ),
                   )
                 : Column(
                     children: tasks
-                        .map((task) => _TaskView(
-                              task: task,
-                              done: done,
-                              tasks: tasks,
-                              doneTasks: doneTasks,
-                            ))
+                        .map(
+                          (task) => _TaskView(
+                            task: task,
+                            done: done,
+                            tasks: tasks,
+                            doneTasks: doneTasks,
+                          ),
+                        )
                         .toList(),
                   ),
           ),
@@ -96,10 +100,7 @@ class _TaskView extends StatelessWidget {
     return GestureDetector(
       onTap: tasks.contains(task)
           ? () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddTaskScreen(task: task)));
+              if (!task.done!) context.push('/addtask', extra: task);
             }
           : () {},
       child: done
@@ -116,20 +117,30 @@ class _TaskView extends StatelessWidget {
                 doneTasks: doneTasks,
               ),
               onDismissed: (direction) {
-                context
-                    .read<HomePageBloc>()
-                    .add(RemoveTaskEvent(task: task, context: context));
+                context.read<HomePageBloc>().add(
+                      RemoveTaskEvent(
+                        task: task,
+                        context: context,
+                      ),
+                    );
               },
             )
           : Dismissible(
               onDismissed: (direction) {
                 if (direction == DismissDirection.endToStart) {
-                  context
-                      .read<HomePageBloc>()
-                      .add(RemoveTaskEvent(task: task, context: context));
+                  context.read<HomePageBloc>().add(
+                        RemoveTaskEvent(
+                          task: task,
+                          context: context,
+                        ),
+                      );
                 } else {
-                  context.read<HomePageBloc>().add(ChangeTaskEvent(
-                      task: task..done = !task.done!, context: context));
+                  context.read<HomePageBloc>().add(
+                        ChangeTaskEvent(
+                          task: task..done = !task.done!,
+                          context: context,
+                        ),
+                      );
                 }
               },
               secondaryBackground: const _DismissibleBg(
@@ -138,13 +149,14 @@ class _TaskView extends StatelessWidget {
                 iconAlignment: Alignment.centerRight,
               ),
               background: const _DismissibleBg(
-                  color: Styles.green,
-                  iconAlignment: Alignment.centerLeft,
-                  icon: Icons.done),
+                color: Styles.green,
+                iconAlignment: Alignment.centerLeft,
+                icon: Icons.done,
+              ),
               key: UniqueKey(),
               child: _TaskCard(
                 task: task,
-                doneTasks: [],
+                doneTasks: const [],
               ),
             ),
     );
@@ -168,8 +180,9 @@ class _TaskCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(right: 15),
         decoration: BoxDecoration(
-            color: Styles.scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(13)),
+          color: Styles.scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(13),
+        ),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +190,8 @@ class _TaskCard extends StatelessWidget {
               doneTasks.contains(task)
                   ? const _DoneMark()
                   : _TaskDifficultyIndicator(
-                      taskDifficulty: task.importance ?? Importance.low),
+                      taskDifficulty: task.importance ?? Importance.low,
+                    ),
               const Gap(10),
               Expanded(
                 child: Column(
@@ -289,12 +303,13 @@ class _TaskDifficultyIndicator extends StatelessWidget {
       child: Container(
         width: 7,
         decoration: BoxDecoration(
-            color: switch (taskDifficulty) {
-              Importance.low => Styles.green,
-              Importance.basic => Styles.systemOrange,
-              Importance.important => Styles.red
-            },
-            borderRadius: BorderRadius.circular(90)),
+          color: switch (taskDifficulty) {
+            Importance.low => Styles.green,
+            Importance.basic => Styles.systemOrange,
+            Importance.important => Styles.red
+          },
+          borderRadius: BorderRadius.circular(90),
+        ),
       ),
     );
   }
