@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
@@ -43,7 +44,9 @@ class _ViewSwitcherState extends State<ViewSwitcher> {
               title: variants[index],
               selected: true,
             )
-          : _Tab(title: variants[index]),
+          : _Tab(
+              title: variants[index],
+            ),
     );
     return GestureDetector(
       onTap: () {
@@ -101,7 +104,7 @@ class _Tab extends StatelessWidget {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(22, 6, 22, 8),
-                child: Text(
+                child: AutoSizeText(
                   title,
                   style: const TextStyle(
                     fontSize: 18,
@@ -120,9 +123,12 @@ class _Tab extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text(
+                AutoSizeText(
                   title,
-                  style: const TextStyle(color: Styles.grey06, fontSize: 18),
+                  style: const TextStyle(
+                    color: Styles.grey06,
+                    fontSize: 18,
+                  ),
                 ),
               ],
             ),
@@ -151,7 +157,7 @@ class _RoundedCorner extends StatelessWidget {
           width: 30,
           height: 30,
           decoration: BoxDecoration(
-            color: Styles.scaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(90),
           ),
         ),

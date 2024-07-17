@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/firebase/analytics.dart';
 import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/services/new_task_service.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
@@ -147,6 +148,7 @@ class _BackButton extends StatelessWidget {
         size: 40.0,
       ),
       onPressed: () {
+        AnalyticsEvents.pushPage('main_page');
         RepositoryProvider.of<NewTaskService>(context).resetTask();
         context.go('/');
       },
@@ -166,11 +168,14 @@ class _RedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomButton(
       onTap: () {
+        AnalyticsEvents.pushPage('main_page');
         RepositoryProvider.of<NewTaskService>(context).resetTask();
-        context.read<HomePageBloc>().add(RemoveTaskEvent(
-              task: task,
-              context: context,
-            ));
+        context.read<HomePageBloc>().add(
+              RemoveTaskEvent(
+                task: task,
+                context: context,
+              ),
+            );
       },
       text: S.of(context).delete,
       color: Styles.red,
@@ -191,12 +196,15 @@ class _GreenButton extends StatelessWidget {
     return CustomButton(
       onTap: () {
         if (task.text != null) {
+          AnalyticsEvents.pushPage('main_page');
           RepositoryProvider.of<NewTaskService>(context).resetTask();
           NavigationManager.goToMainScreen(context);
-          context.read<HomePageBloc>().add(ChangeTaskEvent(
-                task: task,
-                context: context,
-              ));
+          context.read<HomePageBloc>().add(
+                ChangeTaskEvent(
+                  task: task,
+                  context: context,
+                ),
+              );
         }
       },
       text: S.of(context).save,
@@ -220,6 +228,7 @@ class _OrangeButton extends StatelessWidget {
       text: S.of(context).addtask,
       onTap: () {
         if (task.text != null) {
+          AnalyticsEvents.pushPage('main_page');
           NavigationManager.goToMainScreen(context);
           RepositoryProvider.of<NewTaskService>(context).resetTask();
           context.read<HomePageBloc>().add(

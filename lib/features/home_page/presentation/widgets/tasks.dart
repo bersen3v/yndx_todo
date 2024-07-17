@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
+import 'package:yndx_todo/core/firebase/analytics.dart';
 import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
@@ -120,6 +121,7 @@ class _TaskView extends StatelessWidget {
           ? () {
               if (!task.done!) {
                 NavigationManager.goToAddTaskScreen(context, task);
+                AnalyticsEvents.pushPage('add_task_page');
               }
             }
           : () {},

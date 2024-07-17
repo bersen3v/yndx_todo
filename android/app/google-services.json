@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1040213415900",
+    "firebase_url": "https://yandextodo-642a1-default-rtdb.firebaseio.com",
+    "project_id": "yandextodo-642a1",
+    "storage_bucket": "yandextodo-642a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040213415900:android:9e6898ed478c7e39a56119",
+        "android_client_info": {
+          "package_name": "com.example.yndx_todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-zt8DiN0SyaW5pVGMZFCii-bwkcjf6R0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

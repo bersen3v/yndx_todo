@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yndx_todo/core/data/data_fetcher.dart';
+import 'package:yndx_todo/core/firebase/analytics.dart';
 import 'package:yndx_todo/core/logger.dart';
 import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
@@ -103,11 +105,11 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: Text(
+                        child: AutoSizeText(
                           textAlign: TextAlign.center,
                           S.of(context).sync,
-                          style: const TextStyle(
-                            color: Styles.grey06,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
                             fontSize: 25,
                             height: 1,
                           ),
@@ -200,7 +202,7 @@ class _LoadedView extends StatelessWidget {
             ),
             const _Button(
               key: ValueKey('home_button_add'),
-            )
+            ),
           ],
         );
       },
@@ -227,15 +229,8 @@ class _TaskListState extends State<_TaskList> {
         final doneTasks = data.tasks.where((e) => e.done == true).toList();
 
         List<Widget> children = [
+          const ThemeSwitcher(),
           const Gap(30),
-          Switch(
-            value: context.read<ChangeThemeCubit>().state.brightness ==
-                Brightness.dark,
-            onChanged: (bool state) {
-              final cubit = context.read<ChangeThemeCubit>();
-              cubit.changeThemeBrightness();
-            },
-          ),
           ViewSwitcher(
             inWork: '${tasks.length}',
             done: '${doneTasks.length}',
@@ -279,6 +274,40 @@ class _TaskListState extends State<_TaskList> {
   }
 }
 
+class ThemeSwitcher extends StatelessWidget {
+  const ThemeSwitcher({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Gap(20),
+        Text(
+          'Dark mode',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+        const Gap(5),
+        Switch(
+          activeColor: Styles.orange,
+          inactiveTrackColor: Styles.white,
+          trackOutlineColor: WidgetStateProperty.all(Styles.orange),
+          inactiveThumbColor: Styles.orange,
+          value: context.read<ChangeThemeCubit>().state.brightness ==
+              Brightness.dark,
+          onChanged: (bool state) {
+            final cubit = context.read<ChangeThemeCubit>();
+            cubit.changeThemeBrightness();
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _Button extends StatelessWidget {
   const _Button({
     super.key,
@@ -289,12 +318,36 @@ class _Button extends StatelessWidget {
     return Positioned(
       bottom: 30,
       right: 10,
-      left: 10,
-      child: CustomButton(
-        color: Styles.orange,
-        text: S.of(context).addtask,
-        onTap: () {
-          NavigationManager.goToAddTaskScreen(context);
+      left: MediaQuery.of(context).orientation == Orientation.portrait
+          ? 10
+          : null,
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          return MediaQuery.of(context).orientation == Orientation.portrait
+              ? CustomButton(
+                  color: Styles.orange,
+                  text: S.of(context).addtask,
+                  onTap: () {
+                    AnalyticsEvents.pushPage('add_task_page');
+                    NavigationManager.goToAddTaskScreen(context);
+                  },
+                )
+              : IconButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      Styles.orange,
+                    ),
+                  ),
+                  color: Styles.white,
+                  onPressed: () {
+                    AnalyticsEvents.pushPage('add_task_page');
+                    NavigationManager.goToAddTaskScreen(context);
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 40,
+                  ),
+                );
         },
       ),
     );

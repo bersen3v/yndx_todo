@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
+import 'package:yndx_todo/core/firebase/analytics.dart';
 import 'package:yndx_todo/core/logger.dart';
 import 'package:yndx_todo/core/services/todo_service.dart';
 
@@ -42,6 +43,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       view: view,
       tasks: todoService.tasks,
     ));
+    AnalyticsEvents.removeTask();
   }
 
   void _onChangeTaskEvent(
@@ -53,6 +55,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       view: view,
       tasks: todoService.tasks,
     ));
+    AnalyticsEvents.editTask();
   }
 
   void _onRegisterServicesEvent(
@@ -90,5 +93,6 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       view: view,
       tasks: todoService.tasks,
     ));
+    AnalyticsEvents.addTask();
   }
 }
