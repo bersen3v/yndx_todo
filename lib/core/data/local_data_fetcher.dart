@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
+import 'package:yndx_todo/core/logger.dart';
 
 class LocalDataFetcher {
   final String boxname;
@@ -22,7 +23,11 @@ class LocalDataFetcher {
   }
 
   Future<void> removeTask(Task task) async {
-    await task.delete();
+    try {
+      await task.delete();
+    } catch (e) {
+      logger.d('');
+    }
   }
 
   Future<void> updateTask(Task task) async {
