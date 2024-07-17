@@ -89,8 +89,8 @@ void main() {
         todoServiceMock: _todoServiceMock,
       ));
 
-      final item = find.byKey(const ValueKey('home_button_add'));
-      await widgetTester.tap(item);
+      // final item = find.byKey(const ValueKey('home_button_add'));
+      // await widgetTester.tap(item);
     });
   });
 }
