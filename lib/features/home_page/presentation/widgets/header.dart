@@ -13,6 +13,10 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const bool isDev = bool.fromEnvironment(
+      'IS_DEV',
+      defaultValue: false,
+    );
     final theme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(
@@ -38,6 +42,15 @@ class Header extends StatelessWidget {
                 fontSize: 30,
                 fontWeight: FontWeight.w400,
                 color: theme.onSecondary,
+              ),
+            ),
+            const TextSpan(
+              text: isDev ? '  [dev] ' : '',
+              style: TextStyle(
+                height: 1,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.red,
               ),
             ),
           ],

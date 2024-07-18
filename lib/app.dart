@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:yndx_todo/core/di.dart';
-import 'package:yndx_todo/core/enums/evvironment.dart';
 import 'package:yndx_todo/core/navigation/router.dart';
 import 'package:yndx_todo/core/theme/cubit/change_theme_cubit.dart';
 import 'package:yndx_todo/core/theme/theme.dart';
 import 'package:yndx_todo/generated/l10n.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, this.environment = Environment.production});
+  const App({super.key, required this.isDev});
 
-  final Environment environment;
+  final bool isDev;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class App extends StatelessWidget {
             ],
             supportedLocales: S.delegate.supportedLocales,
             theme: state.brightness == Brightness.dark ? darkTheme : lightTheme,
-            debugShowCheckedModeBanner: false,
+            debugShowCheckedModeBanner: isDev ? true : false,
             routerConfig: router,
           );
         },
