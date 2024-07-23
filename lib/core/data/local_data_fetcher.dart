@@ -26,7 +26,7 @@ class LocalDataFetcher {
     try {
       await task.delete();
     } catch (e) {
-      logger.d(e);
+      
     }
   }
 
