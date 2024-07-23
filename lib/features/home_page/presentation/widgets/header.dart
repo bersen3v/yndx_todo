@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/generated/l10n.dart';
 
 class Header extends StatelessWidget {
@@ -14,6 +13,11 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const bool isDev = bool.fromEnvironment(
+      'IS_DEV',
+      defaultValue: false,
+    );
+    final theme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(
         left: 10,
@@ -25,18 +29,28 @@ class Header extends StatelessWidget {
           children: <TextSpan>[
             TextSpan(
               text: S.of(context).homeHeader,
-              style: const TextStyle(
+              style: TextStyle(
                 height: 1,
                 fontSize: 40,
                 fontWeight: FontWeight.w500,
+                color: theme.secondary,
               ),
             ),
             TextSpan(
               text: "($completedTasks/$allTasks)",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w400,
-                color: Styles.grey06,
+                color: theme.onSecondary,
+              ),
+            ),
+            const TextSpan(
+              text: isDev ? '  [dev] ' : '',
+              style: TextStyle(
+                height: 1,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.red,
               ),
             ),
           ],

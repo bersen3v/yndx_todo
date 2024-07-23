@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:yndx_todo/core/di.dart';
-import 'package:yndx_todo/core/enums/evvironment.dart';
-import 'package:yndx_todo/core/router/router.dart';
+import 'package:yndx_todo/core/navigation/router.dart';
+import 'package:yndx_todo/core/theme/cubit/change_theme_cubit.dart';
+import 'package:yndx_todo/core/theme/theme.dart';
 import 'package:yndx_todo/generated/l10n.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, this.environment = Environment.production});
+  const App({super.key, required this.isDev});
 
-  final Environment environment;
+  final bool isDev;
 
   @override
   Widget build(BuildContext context) {
     return DIContainer().diProvider(
       context,
-      child: MaterialApp.router(
-        localizationsDelegates: const [
-          S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        theme: ThemeData(
-          fontFamily: 'sfpro',
-          useMaterial3: true,
-        ),
-        debugShowCheckedModeBanner: false,
-        routerConfig: router,
+      child: BlocBuilder<ChangeThemeCubit, ChangeThemeState>(
+        builder: (context, state) {
+          return MaterialApp.router(
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            theme: state.brightness == Brightness.dark ? darkTheme : lightTheme,
+            debugShowCheckedModeBanner: isDev ? true : false,
+            routerConfig: router,
+          );
+        },
       ),
     );
   }

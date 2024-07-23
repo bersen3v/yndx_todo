@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/presentation/widgets/header.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -21,8 +20,8 @@ class CustomAppBar extends StatelessWidget {
       collapsedHeight: 90,
       elevation: 20,
       shadowColor: Colors.black,
-      surfaceTintColor: Styles.scaffoldBackgroundColor,
-      backgroundColor: Styles.scaffoldBackgroundColor,
+      surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.only(bottom: 15),
         centerTitle: false,

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:yndx_todo/core/domain/entities/task.dart';
 import 'package:yndx_todo/core/enums/importance.dart';
 import 'package:yndx_todo/core/extensions/on_datetime.dart';
+import 'package:yndx_todo/core/firebase/analytics.dart';
+import 'package:yndx_todo/core/firebase/remote_config_service.dart';
+import 'package:yndx_todo/core/navigation/navigation_manager.dart';
 import 'package:yndx_todo/core/styles/styles.dart';
 import 'package:yndx_todo/features/home_page/bloc/home_page_bloc.dart';
 import 'package:yndx_todo/generated/l10n.dart';
@@ -23,7 +25,19 @@ class Tasks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final useMobileView = MediaQuery.of(context).size.shortestSide < 600;
+    final children = tasks
+        .map(
+          (task) => _TaskView(
+            task: task,
+            done: done,
+            tasks: tasks,
+            doneTasks: doneTasks,
+          ),
+        )
+        .toList();
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -34,7 +48,11 @@ class Tasks extends StatelessWidget {
           child: Padding(
             padding: done && tasks.isEmpty
                 ? EdgeInsets.zero
-                : const EdgeInsets.only(top: 8, right: 8, left: 8),
+                : const EdgeInsets.only(
+                    top: 8,
+                    right: 8,
+                    left: 8,
+                  ),
             child: tasks.isEmpty
                 ? SizedBox(
                     height: 150,
@@ -62,18 +80,20 @@ class Tasks extends StatelessWidget {
                             ),
                           ),
                   )
-                : Column(
-                    children: tasks
-                        .map(
-                          (task) => _TaskView(
-                            task: task,
-                            done: done,
-                            tasks: tasks,
-                            doneTasks: doneTasks,
-                          ),
-                        )
-                        .toList(),
-                  ),
+                : useMobileView
+                    ? Column(
+                        children: children,
+                      )
+                    : GridView.count(
+                        childAspectRatio: 2.7,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        children: children,
+                      ),
           ),
         )
       ],
@@ -100,65 +120,70 @@ class _TaskView extends StatelessWidget {
     return GestureDetector(
       onTap: tasks.contains(task)
           ? () {
-              if (!task.done!) context.push('/addtask', extra: task);
+              if (!task.done!) {
+                NavigationManager.goToAddTaskScreen(context, task);
+                AnalyticsEvents.pushPage('add_task_page');
+              }
             }
           : () {},
-      child: done
-          ? Dismissible(
-              direction: DismissDirection.endToStart,
-              key: UniqueKey(),
-              background: const _DismissibleBg(
-                color: Styles.red,
-                icon: Icons.delete,
-                iconAlignment: Alignment.centerRight,
-              ),
-              child: _TaskCard(
-                task: task,
-                doneTasks: doneTasks,
-              ),
-              onDismissed: (direction) {
-                context.read<HomePageBloc>().add(
-                      RemoveTaskEvent(
-                        task: task,
-                        context: context,
-                      ),
-                    );
-              },
-            )
-          : Dismissible(
-              onDismissed: (direction) {
-                if (direction == DismissDirection.endToStart) {
+      child: IntrinsicHeight(
+        child: done
+            ? Dismissible(
+                direction: DismissDirection.endToStart,
+                key: UniqueKey(),
+                background: const _DismissibleBg(
+                  color: Styles.red,
+                  icon: Icons.delete,
+                  iconAlignment: Alignment.centerRight,
+                ),
+                child: _TaskCard(
+                  task: task,
+                  doneTasks: doneTasks,
+                ),
+                onDismissed: (direction) {
                   context.read<HomePageBloc>().add(
                         RemoveTaskEvent(
                           task: task,
                           context: context,
                         ),
                       );
-                } else {
-                  context.read<HomePageBloc>().add(
-                        ChangeTaskEvent(
-                          task: task..done = !task.done!,
-                          context: context,
-                        ),
-                      );
-                }
-              },
-              secondaryBackground: const _DismissibleBg(
-                color: Styles.red,
-                icon: Icons.delete,
-                iconAlignment: Alignment.centerRight,
+                },
+              )
+            : Dismissible(
+                onDismissed: (direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    context.read<HomePageBloc>().add(
+                          RemoveTaskEvent(
+                            task: task,
+                            context: context,
+                          ),
+                        );
+                  } else {
+                    context.read<HomePageBloc>().add(
+                          ChangeTaskEvent(
+                            task: task..done = !task.done!,
+                            context: context,
+                          ),
+                        );
+                  }
+                },
+                secondaryBackground: const _DismissibleBg(
+                  color: Styles.red,
+                  icon: Icons.delete,
+                  iconAlignment: Alignment.centerRight,
+                ),
+                background: const _DismissibleBg(
+                  color: Styles.green,
+                  iconAlignment: Alignment.centerLeft,
+                  icon: Icons.done,
+                ),
+                key: UniqueKey(),
+                child: _TaskCard(
+                  task: task,
+                  doneTasks: const [],
+                ),
               ),
-              background: const _DismissibleBg(
-                color: Styles.green,
-                iconAlignment: Alignment.centerLeft,
-                icon: Icons.done,
-              ),
-              key: UniqueKey(),
-              child: _TaskCard(
-                task: task,
-                doneTasks: const [],
-              ),
-            ),
+      ),
     );
   }
 }
@@ -183,30 +208,28 @@ class _TaskCard extends StatelessWidget {
           color: Styles.scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(13),
         ),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              doneTasks.contains(task)
-                  ? const _DoneMark()
-                  : _TaskDifficultyIndicator(
-                      taskDifficulty: task.importance ?? Importance.low,
-                    ),
-              const Gap(10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(6),
-                    if (task.deadline != null)
-                      _DeadlineText(ddl: task.deadline?.showDeadlineDate(task)),
-                    _TaskDescriptionText(task: task.text ?? ''),
-                    const Gap(6)
-                  ],
-                ),
-              )
-            ],
-          ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            doneTasks.contains(task)
+                ? const _DoneMark()
+                : _TaskDifficultyIndicator(
+                    taskDifficulty: task.importance ?? Importance.low,
+                  ),
+            const Gap(10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Gap(6),
+                  if (task.deadline != null)
+                    _DeadlineText(ddl: task.deadline?.showDeadlineDate(task)),
+                  _TaskDescriptionText(task: task.text ?? ''),
+                  const Gap(6)
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -223,15 +246,14 @@ class _TaskDescriptionText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          task,
-          style: const TextStyle(
-            color: Styles.white,
-            fontSize: 19,
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        task,
+        style: const TextStyle(
+          color: Styles.white,
+          fontSize: 19,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
@@ -252,8 +274,8 @@ class _DeadlineText extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10),
       child: Text(
         ddl!,
-        style: const TextStyle(
-          color: Styles.grey06,
+        style: TextStyle(
+          color: firebaseRemoteConfigService.getTaskColor(),
           fontSize: 19,
         ),
       ),

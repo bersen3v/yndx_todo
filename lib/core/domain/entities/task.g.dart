@@ -22,7 +22,7 @@ class TaskAdapter extends TypeAdapter<Task> {
       changedAt: fields[2] as DateTime?,
       done: fields[3] as bool?,
       text: fields[4] as String?,
-      importance: fields[5] as Importance,
+      importance: fields[5] as Importance?,
       lastUpdatedBy: fields[6] as String?,
       id: fields[7] as int?,
     );

@@ -21,11 +21,22 @@ dependencies:
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   path_provider: ^2.0.2
+  auto_size_text:
   go_router: ^14.2.0
   flutter_intl: ^0.0.1
   url_launcher: ^6.3.0
+  equatable:
+  firebase_analytics: ^11.2.0
+  firebase_core: ^3.2.0
+  firebase_remote_config: ^5.0.3
+  firebase_crashlytics: ^4.0.3
+  freezed_annotation: ^2.4.4
+  json_annotation:
+
+
 
 dev_dependencies:
+  freezed: ^2.5.2
   flutter_lints: ^4.0.0
   build_runner: ^2.4.11
   flutter_test:
@@ -34,6 +45,7 @@ dev_dependencies:
   mocktail:
   integration_test:
     sdk: flutter
+  json_serializable:
 
 
 flutter:
